@@ -1,0 +1,411 @@
+body{
+  background: #0A0100;
+}
+
+.main{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+
+}
+.main-bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  }
+
+.top-menu{
+  position: absolute;
+  top: 0;
+  height: 80px;
+  width: 100%;
+  border-bottom: 8px solid #73583F;
+  box-shadow: 0 4px 4px 4px rgba(0,0,0,0.25);
+}
+
+.text-family{
+  font-family: 'Segoe UI Symbol', serif;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #faceaf 0%, #b86227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.top-menu-title{
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  width: 170px;
+  height: 53px;
+  font-family: 'Segoe UI Symbol', serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 53px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #faceaf 0%, #b86227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+.top-menu-score{
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 249px;
+  height: 53px;
+  font-family: 'Segoe UI Symbol', serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 53px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #faceaf 0%, #b86227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.top-menu-step{
+  position: absolute;
+  right: 14px;
+  margin: auto;
+  width: auto;
+  height: 53px;
+  font-family: 'Segoe UI Symbol', serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 53px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #faceaf 0%, #b86227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.playing-field{
+  position: absolute;
+  left: -20px;
+  right: 0;
+  top:300px;
+  width: 500px;
+  height: 500px;
+  margin: auto;
+  transform: scale(2);
+}
+
+.hand{
+  position: absolute;
+  left: auto;
+  right: -300px;
+  top: -60px;
+  bottom: 50px;
+  display: flex;
+  gap: 10px;
+  margin: auto;
+}
+.hand-item{
+  position: relative;
+  margin: 5px;
+}
+.hand-item-effect{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 70px;
+}
+.hand-item-effect:hover{
+  box-shadow: 0 0 4px 4px #d12613;
+}
+
+.hand-box{
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+  height: 175px;
+  width: 400px;
+  overflow-y: scroll;
+  transform: scale(0.8);
+
+}
+
+
+
+
+.btn-hand{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 0;
+  left: 40px;
+  bottom: 120px;
+
+}
+.restart{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 0;
+  left: 100px;
+  bottom: 120px;
+}
+.btn-hand img, .restart img{
+  width: 100%;
+  cursor: pointer;
+}
+
+.modal, .modal-bg{
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+.modal-bg{
+  background: #0A0100 !important;
+  opacity: 0.6;
+}
+.modal-content{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 800px;
+  height: 500px;
+  z-index: 1010;
+}
+.modal-content img{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.modal-title{
+  position: absolute;
+  z-index: 1010;
+  left: 0;
+  right: 0;
+  top: 30px;
+  margin: auto;
+  text-align: center;
+  width: 200px;
+  font-size: 40pt;
+}
+.modal-body{
+  position: absolute;
+  z-index: 1010;
+  top: 100px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 650px;
+  height: 400px;
+  font-size: 20pt;
+
+
+}
+.modal-footer{
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  display: flex;
+  z-index: 1010;
+  width: 600px;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  height: 80px;
+}
+.modal-btn{
+  position: relative;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  cursor: pointer;
+
+}
+
+.modal-btn-text{
+  position: absolute;
+  z-index: 1010;
+  text-align: center;
+  width: 100%;
+  height: 40px;
+  top: 0;
+  bottom: 0;
+  font-size: 20pt;
+  margin: auto;
+  color: #CCB9B1;
+}
+.modal-body-text{
+  margin-top: 20px;
+}
+@media (orientation: landscape) {
+  .main-bg{
+      width: 100%;
+  }
+}
+
+@media (orientation: portrait) {
+  .main-bg{
+     height: 100%;
+  }
+}
+
+@media (max-width: 1940px) {
+
+  .hand-box{
+    height: 175px;
+    width: 280px;
+  }
+  .hand{
+    right: -180px;
+  }
+  .btn-hand{
+    left: 30px;
+  }
+  .restart{
+    left: 90px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .playing-field{
+    top: 100px;
+    transform: scale(1);
+  }
+  .hand-box{
+    height: 175px;
+    width: 280px;
+  }
+  .hand{
+    right: -180px;
+  }
+  .btn-hand{
+    left: 30px;
+  }
+  .restart{
+    left: 90px;
+  }
+  .top-menu-title, .top-menu-score, .top-menu-step{
+    top: 5px;
+    height: 30px;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 20px;
+  }
+  .top-menu-score{
+    left: auto;
+    right: 14px;
+    top: 5px;
+    width: auto;
+  }
+  .top-menu-step{
+    left: 14px;
+    right: auto;
+    top: 50px;
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .playing-field{
+    height: 600px;
+
+  }
+  .hand-box{
+    height: 175px;
+    width: 500px;
+  }
+  .hand{
+    right: auto;
+    top: auto;
+  }
+  .btn-hand{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    right: 0;
+    left: 50px;
+    bottom: 10px;
+  }
+  .restart{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    right: 110px;
+    left: auto;
+    bottom: 10px;
+  }
+
+  .modal-content{
+    width: 100%;
+    height: 520px;
+  }
+  .modal-body-text{
+    margin-left: 40px;
+  }
+  .modal-footer{
+    text-align: center;
+    position: fixed;
+    flex-wrap: wrap;
+    width: min-content;
+    top: 260px;
+
+  }
+.modal-btn{
+ width: 200px;
+
+}
+}
+
+@media (max-height: 800px) {
+  .playing-field{
+    top: 10px;
+    transform: scale(1);
+  }
+  .top-menu{
+    height: 30px;
+  }
+  .top-menu-title, .top-menu-score, .top-menu-step{
+    top: 5px;
+    height: 30px;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 20px;
+  }
+  .modal-content{
+    width: 600px;
+    height: 300px;
+  }
+  .modal-body{
+    width: 500px;
+    height: 270px;
+  }
+  .modal-body-text{
+    margin-top: 0;
+  }
+  .modal-footer{
+    height: 50px;
+    width: 500px;
+  }
+
+}
