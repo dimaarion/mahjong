@@ -21,16 +21,19 @@ export default function Modal({
                         Комбо: 100
                     </div>
                     <div className={"modal-footer"}>
-                        <div className={"modal-btn"}>
+                        <div onPointerDown={()=>{
+                            setCurrentLevel(currentLevel)
+                            startGame()
+                        }} className={"modal-btn"}>
                             <img src={"./img/btn-bg.png"} />
-                            <div className={"modal-btn-text"}>Закрыть</div>
+                            <div className={"modal-btn-text"}>Заново</div>
                         </div>
                         <div onPointerDown={()=>{
                             setCurrentLevel(currentLevel + 1)
                             startGame()
                         }} className={"modal-btn"}>
                             <img src={"./img/btn-bg.png"} />
-                            <div className={"modal-btn-text"}>Продолжить{currentLevel}</div>
+                            <div className={"modal-btn-text"}>Продолжить</div>
                         </div>
                     </div>
                 </div>

@@ -35,6 +35,10 @@ import Plum from "./Plum.jsx";
 import TopMenu from "../TopMenu.jsx";
 import level from "../assets/level.json";
 import Modal from "../Modal.jsx";
+import {
+    generateMahjongTiles, generateRandomMahjong, isTileOpen
+} from "../action.js";
+import {useSpring, animated} from "@react-spring/web";
 
 // Список типов костей с уникальными идентификаторами для SVG-рендеринга
 const TILE_TYPES = [
@@ -159,7 +163,12 @@ export default function MahjongDomino() {
     const [lastMatchTime, setLastMatchTime] = useState(0);
     const [scale, setScale] = useState(1);
     const boardRef = useRef(null);
-    const [currentLevel, setCurrentLevel] = useState(1);
+    const [currentLevel, setCurrentLevel] = useState(1000);
+    const [handId, setHandId] = useState(null);
+    const [direct, setDirect] = useState("");
+    const [countDirect, setCountDirect] = useState(3);
+    const [complexity, setComplexity] = useState(2)
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -179,14 +188,23 @@ export default function MahjongDomino() {
         startGame();
     }, []);
 
+    useEffect(() => {
+        let scroll = document.querySelector(".hand-box")
+        if(scroll){
+            console.log(scroll.scrollHeight)
+            scroll.scrollTop = scroll.scrollHeight
+        }
+
+    }, [hand]);
+
     const startGame = () => {
         // Раскладка для 1 уровня (18 камней)
         const levelData = level.levels[currentLevel];
-        const boardLayout = levelData.layout;
+        const boardLayout = generateRandomMahjong(currentLevel);
         // 1. Ограничиваем пул уникальных типов для этого уровня (например, 6-7 видов),
         // чтобы они гарантированно создавали много пар на поле.
 
-        const UNIQUE_TYPES_COUNT = 6;
+        const UNIQUE_TYPES_COUNT =  boardLayout.length / complexity;
         const selectedTypes = shuffle(TILE_TYPES).slice(0, UNIQUE_TYPES_COUNT);
 
         // 2. Заполняем поле костями из выбранных типов
@@ -207,7 +225,7 @@ export default function MahjongDomino() {
         // Нам нужно заполнить 7 мест в руке + сделать запас в колоду (например, еще 15 костей).
         // Итого нужно сгенерировать 22 кости.
         let offBoardPool = [];
-        const neededOffBoardCount = 18;
+        const neededOffBoardCount = boardLayout.length;
 
         for (let i = 0; i < neededOffBoardCount; i++) {
             // Берем тип из тех, что гарантированно присутствуют на доске
@@ -222,8 +240,8 @@ export default function MahjongDomino() {
         offBoardPool = shuffle(offBoardPool);
 
         // Распределяем на стартовую руку и колоду добора
-        const initialHand = offBoardPool.slice(0, 7);
-        const actualDeck = offBoardPool.slice(7);
+        const initialHand = offBoardPool.slice(0, 8);
+        const actualDeck = offBoardPool.slice(8);
 
         // 5. Обновляем стейты игры
         setBoardTiles(board);
@@ -233,22 +251,10 @@ export default function MahjongDomino() {
         setScore(0);
         setCombo(1);
         setLastMatchTime(Date.now());
+        setCountDirect(boardLayout.length > 5?(boardLayout.length / 5).toFixed(0):3)
     };
 
-    const isTileOpen = (tile, allTiles) => {
-        const hasTileAbove = allTiles.some(t =>
-            t.z === tile.z + 1 &&
-            Math.abs(t.x - tile.x) < 1 &&
-            Math.abs(t.y - tile.y) < 1
-        );
-        if (hasTileAbove) return false;
 
-        const sameLayer = allTiles.filter(t => t.z === tile.z && t.id !== tile.id);
-        const hasLeft = sameLayer.some(t => Math.abs(t.y - tile.y) < 0.7 && t.x === tile.x - 1);
-        const hasRight = sameLayer.some(t => Math.abs(t.y - tile.y) < 0.7 && t.x === tile.x + 1);
-
-        return !(hasLeft && hasRight);
-    };
 
     const handleHandTileClick = (id) => {
         setSelectedHandId(id === selectedHandId ? null : id);
@@ -256,22 +262,21 @@ export default function MahjongDomino() {
 
     // ФУНКЦИЯ ДОБОРА КОСТИ В РУКУ
     const drawTileToHand = () => {
-        if (deck.length === 0) return; // Колода пуст
-        let newDeck = [...deck];
-        console.log(newDeck)
-        const drawnTile = newDeck.shift(); // Берем верхнюю кость
+      //  if (deck.length === 0) return; // Колода пуст
 
-        // Штраф за добор, если в руке уже "полно" костей (7 или больше)
-        if (hand.length >= 7) {
-            setScore(prev => Math.max(0, prev - 15));
-        }
+        // Перемешиваем копию колоды
+       // let newDeck = shuffle(deck);
 
-        setHand([...hand, drawnTile]);
-        setDeck(newDeck);
-        setCombo(1); // Добор сбрасывает комбо скорости
+
+        // Обновляем состояние: только колода
+       // setDeck(newDeck);
+
+        // Сбрасываем комбо скорости
+       // setCombo(1);
     };
 
     const handleBoardTileClick = (boardTile) => {
+
         if (!isTileOpen(boardTile, boardTiles) || selectedHandId === null) return;
 
         const handTile = hand.find(t => t.id === selectedHandId);
@@ -289,23 +294,27 @@ export default function MahjongDomino() {
 
             const basePoints = (boardTile.z + 1) * 10;
             const pointsGained = basePoints * newCombo;
+            setHandId(boardTile.id)
+            setTimeout(()=>{
+                const newBoard = boardTiles.filter(t => t.id !== boardTile.id);
+                let newHand = hand.filter(t => t.id !== handTile.id);
+                let newDeck = [...deck];
+                // Автоматический добор происходит только если в руке стало МЕНЬШЕ 7 костей
+                if (newHand.length < 8 && newDeck.length > 0) {
+                    newHand.push(newDeck.shift());
+                }
 
-            const newBoard = boardTiles.filter(t => t.id !== boardTile.id);
-            let newHand = hand.filter(t => t.id !== handTile.id);
-            let newDeck = [...deck];
+                setBoardTiles(newBoard);
+                setHand(newHand);
+                setDeck(newDeck);
+                setSelectedHandId(null);
+                setScore(prev => prev + pointsGained);
+                setCombo(newCombo);
+                setLastMatchTime(currentTime);
+            },500)
 
-            // Автоматический добор происходит только если в руке стало МЕНЬШЕ 7 костей
-            if (newHand.length < 7 && newDeck.length > 0) {
-                newHand.push(newDeck.shift());
-            }
 
-            setBoardTiles(newBoard);
-            setHand(newHand);
-            setDeck(newDeck);
-            setSelectedHandId(null);
-            setScore(prev => prev + pointsGained);
-            setCombo(newCombo);
-            setLastMatchTime(currentTime);
+
         } else {
             setSelectedHandId(null);
             setCombo(1);
@@ -317,19 +326,18 @@ let s = true
             <div>
                 <img className={"main-bg"} src={"./img/bg-game.png"} />
             </div>
-
-
-
             <div className={"main"}>
-                <TopMenu score={score} deck={deck.length} />
+                <TopMenu score={score} deck={countDirect} combo={combo} />
                 <div  className={"playing-field"}>
                     {boardTiles.map(tile => {
                         const isOpen = isTileOpen(tile, boardTiles);
                         const canBeTarget = isOpen && selectedHandId !== null;
-
                         return  <div
+                            className={"stone-field"}
                             key={tile.id}
-                            onClick={() => handleBoardTileClick(tile)}
+                            onPointerDown={() => {
+                                handleBoardTileClick(tile)
+                            }}
                             style={{
                                 ...styles.tile,
                                 left: `${tile.x * 64 + tile.z * 6}px`,
@@ -337,15 +345,86 @@ let s = true
                                 zIndex: tile.z * 10 + Math.floor(tile.y),
                                 boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
                                 ...(isOpen ? styles.tileOpen : styles.tileLocked),
-                                ...(canBeTarget ? styles.tileHighlight : {})
+                                ...(canBeTarget ? styles.tileHighlight : {}),
+                                ...(handId === tile.id? {transform: 'scale(0)',transition:'.5s'}:{})
                             }}
                         >
                             <div style={styles.svgContainer}>
                                 <TileSvg typeId={tile.typeId} />
+                                <div onPointerDown={() => {
+                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
+                                        if (countDirect > 0) {
+                                            setCountDirect((countDirect) => countDirect - 1)
+                                        }
+                                        const d = boardTiles.map((el) => {
+                                            if (el.id === tile.id) {
+                                                el.y = el.y - 0.5
+                                            }
+                                            return el
+                                        });
+                                        setBoardTiles(d);
+                                    }
+                                    setDirect("top")
+                                }} className={"field-top"}>
+                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(-90deg)'}} src={"./img/arrow.png"}/>:""}
+                                </div>
+                                <div onPointerDown={() => {
+                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
+                                        if (countDirect > 0) {
+                                            setCountDirect((countDirect) => countDirect - 1)
+                                        }
+                                        const d = boardTiles.map((el)=>{
+                                            if(el.id === tile.id){
+                                                el.x = el.x - 0.5
+                                            }
+                                            return el
+                                        });
+                                        setBoardTiles(d);
+                                    }
+                                    setDirect("left")
+                                }} className={"field-left"} >
+                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(-180deg)'}} src={"./img/arrow.png"}/>:""}
+                                </div>
+                                <div onPointerDown={() => {
+                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
+                                        if (countDirect > 0) {
+                                            setCountDirect((countDirect) => countDirect - 1)
+                                        }
+                                        const d = boardTiles.map((el)=>{
+                                            if(el.id === tile.id){
+                                                el.x = el.x + 0.5
+                                            }
+                                            return el
+                                        });
+                                        setBoardTiles(d);
+                                    }
+                                    setDirect("right")
+                                }} className={"field-right"} >
+                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(0deg)'}} src={"./img/arrow.png"}/>:""}
+                                </div>
+                                <div onPointerDown={()=>{
+                                    if(isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0){
+                                        if(countDirect > 0){
+                                            setCountDirect((countDirect)=>countDirect - 1)
+                                        }
+                                        const d = boardTiles.map((el)=>{
+                                            if(el.id === tile.id){
+                                                el.y = el.y + 0.5
+                                            }
+                                            return el
+                                        });
+                                        setBoardTiles(d);
+                                    }
+                                    setDirect("bottom")
+                                }} className={"field-bottom"} >
+                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(90deg)'}} src={"./img/arrow.png"}/>:""}
+
+                                </div>
                             </div>
                         </div>
                     })}
                     <div className={"hand"}>
+                        {boardTiles.length !== 0  && (
                         <div className={"hand-box"}>
                             {hand.map(tile => {
                                 const isSelected = tile.id === selectedHandId;
@@ -366,20 +445,20 @@ let s = true
                                     </div>
                                 );
                             })}
-                        </div>
-                        {deck.length > 0 && (
-                            <div className={"btn-hand"}>
-                                <img onClick={drawTileToHand} src={"./img/btn.png"}/>
-                            </div>
-                        )}
+                        </div>  )}
+
+                        {boardTiles.length !== 0 && (
                         <div className={"restart"} onClick={startGame}>
                             <img onClick={drawTileToHand} src={"./img/restart.png"}/>
                         </div>
+                        )}
                     </div>
 
                 </div>
+                {boardTiles.length === 0 && (
+                    <Modal startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel}  />
+                )}
 
-<Modal startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel}  />
             </div>
         </>
     }else {
@@ -412,13 +491,14 @@ let s = true
                                         left: `${tile.x * 64 + tile.z * 6}px`,
                                         top: `${tile.y * 82 - tile.z * 6}px`,
                                         zIndex: tile.z * 10 + Math.floor(tile.y),
-                                        boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
+                                       /* boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,*/
                                         ...(isOpen ? styles.tileOpen : styles.tileLocked),
                                         ...(canBeTarget ? styles.tileHighlight : {})
                                     }}
                                 >
                                     <div style={styles.svgContainer}>
                                         <TileSvg typeId={tile.typeId} />
+
                                     </div>
                                 </div>
                             );
@@ -445,7 +525,7 @@ let s = true
                                 opacity: deck.length > 0 ? 1 : 0.4,
                                 cursor: deck.length > 0 ? 'pointer' : 'not-allowed'
                             }}
-                            title={hand.length >= 7 ? "Добор при полной руке стоит 15 очков!" : "Взять кость"}
+                            title={hand.length >= 8 ? "Добор при полной руке стоит 15 очков!" : "Взять кость"}
                         >
                             <div style={styles.deckDrawInside}>
                                 <span>🎴</span>
@@ -590,16 +670,18 @@ const styles = {
         opacity: 1,
         cursor: 'pointer',
         filter: 'brightness(1)'
+
     },
     tileLocked: {
-        opacity: 0.45,
-        filter: 'brightness(0.6)',
-        cursor: 'not-allowed'
+        opacity: 1,
+        filter: 'brightness(0.8)',
+        cursor: 'pointer'
     },
     tileHighlight: {
-        boxShadow: '0 0 20px #39ff14, inset 0 0 10px rgba(57,255,20,0.6)',
+        /*boxShadow: '0 0 20px #39ff14, inset 0 0 10px rgba(57,255,20,0.6)',*/
     },
     svgContainer: {
+        position:"relative",
         width: '100%',
         height: '100%',
         display: 'flex',
