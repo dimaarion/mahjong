@@ -36,9 +36,10 @@ import TopMenu from "../TopMenu.jsx";
 import level from "../assets/level.json";
 import Modal from "../Modal.jsx";
 import {
-    generateMahjongTiles, generateRandomMahjong, isTileOpen
+    generateOrganicPyramid, getLevelDifficultyConfig,
+    isTileOpen
 } from "../action.js";
-import {useSpring, animated} from "@react-spring/web";
+
 
 // Список типов костей с уникальными идентификаторами для SVG-рендеринга
 const TILE_TYPES = [
@@ -163,7 +164,7 @@ export default function MahjongDomino() {
     const [lastMatchTime, setLastMatchTime] = useState(0);
     const [scale, setScale] = useState(1);
     const boardRef = useRef(null);
-    const [currentLevel, setCurrentLevel] = useState(1000);
+    const [currentLevel, setCurrentLevel] = useState(1);
     const [handId, setHandId] = useState(null);
     const [direct, setDirect] = useState("");
     const [countDirect, setCountDirect] = useState(3);
@@ -191,20 +192,19 @@ export default function MahjongDomino() {
     useEffect(() => {
         let scroll = document.querySelector(".hand-box")
         if(scroll){
-            console.log(scroll.scrollHeight)
             scroll.scrollTop = scroll.scrollHeight
         }
 
     }, [hand]);
 
     const startGame = () => {
-        // Раскладка для 1 уровня (18 камней)
+        // Раскладка для уровня
         const levelData = level.levels[currentLevel];
-        const boardLayout = generateRandomMahjong(currentLevel);
-        // 1. Ограничиваем пул уникальных типов для этого уровня (например, 6-7 видов),
-        // чтобы они гарантированно создавали много пар на поле.
+        const config = getLevelDifficultyConfig(currentLevel);
+        const boardLayout = generateOrganicPyramid(config.baseSize, config.maxLayers, config.fillDensity);
 
-        const UNIQUE_TYPES_COUNT =  boardLayout.length / complexity;
+        // 1. Ограничиваем пул уникальных типов для этого уровня
+        const UNIQUE_TYPES_COUNT = boardLayout.length / complexity;
         const selectedTypes = shuffle(TILE_TYPES).slice(0, UNIQUE_TYPES_COUNT);
 
         // 2. Заполняем поле костями из выбранных типов
@@ -243,7 +243,7 @@ export default function MahjongDomino() {
         const initialHand = offBoardPool.slice(0, 8);
         const actualDeck = offBoardPool.slice(8);
 
-        // 5. Обновляем стейты игры
+        // 5. Обновляем стейты игры (без колоды добора)
         setBoardTiles(board);
         setHand(initialHand);
         setDeck(actualDeck);
@@ -251,8 +251,10 @@ export default function MahjongDomino() {
         setScore(0);
         setCombo(1);
         setLastMatchTime(Date.now());
-        setCountDirect(boardLayout.length > 5?(boardLayout.length / 5).toFixed(0):3)
+        setCountDirect(Math.floor(boardLayout.length / 6));
     };
+
+
 
 
 
@@ -340,9 +342,10 @@ let s = true
                             }}
                             style={{
                                 ...styles.tile,
-                                left: `${tile.x * 64 + tile.z * 6}px`,
-                                top: `${tile.y * 82 - tile.z * 6}px`,
-                                zIndex: tile.z * 10 + Math.floor(tile.y),
+                                position: 'absolute',
+                                left: `${tile.x * 60}px`,
+                                top: `${tile.y * 80 - (tile.z * 10)}px`, // Смещение вверх для 3D-эффекта объема
+                                zIndex: tile.z * 10 + Math.floor(tile.y), // Чем выше слой и чем ниже плитка на экране, тем выше zIndex
                                 boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
                                 ...(isOpen ? styles.tileOpen : styles.tileLocked),
                                 ...(canBeTarget ? styles.tileHighlight : {}),
@@ -674,7 +677,7 @@ const styles = {
     },
     tileLocked: {
         opacity: 1,
-        filter: 'brightness(0.8)',
+        filter: 'brightness(0.9)',
         cursor: 'pointer'
     },
     tileHighlight: {

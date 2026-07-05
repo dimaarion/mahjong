@@ -46,7 +46,7 @@ body{
 .top-menu-title{
   position: absolute;
   left: 10px;
-  top: 14px;
+  top: 0;
   width: 170px;
   height: 53px;
   font-family: 'Segoe UI Symbol', serif;
@@ -92,9 +92,11 @@ body{
 .top-menu-step{
   position: absolute;
   right: 14px;
+  left: auto;
+
   margin: auto;
   width: auto;
-  height: 53px;
+  height: 55px;
   font-family: 'Segoe UI Symbol', serif;
   font-style: normal;
   font-weight: 400;
@@ -112,7 +114,7 @@ body{
   position: absolute;
   left: -20px;
   right: 0;
-  top:300px;
+  top:400px;
   width: 500px;
   height: 500px;
   margin: auto;
@@ -122,7 +124,7 @@ body{
 .hand{
   position: absolute;
   left: auto;
-  right: -300px;
+  right: -100px;
   top: -60px;
   bottom: 50px;
   display: flex;
@@ -133,6 +135,7 @@ body{
 .hand-item{
   position: relative;
   margin: 5px;
+
 
 }
 .hand-item-effect{
@@ -151,7 +154,7 @@ body{
   visibility: hidden;
 }
 .arrow {
-    width: 30px;
+   width: 30px;
    height: 20px;
    position: absolute;
    top: 0;
@@ -170,14 +173,12 @@ body{
   display: flex;
   flex-wrap: wrap;
   margin: auto;
-  height: 175px;
-  width: 400px;
+  height: 165px;
+  width: 248px;
   transform: scale(0.8);
+  background: #1c1b1b;
 
 }
-
-
-
 
 .btn-hand{
   position: absolute;
@@ -192,7 +193,7 @@ body{
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 60px;
+  right: 20px;
   left: auto;
   bottom: 120px;
 }
@@ -292,7 +293,7 @@ body{
 
 .field-top{
   position: absolute;
-  top: -30px;
+  top: -20px;
   left: 0;
   right: 14px;
   margin: auto;
@@ -306,7 +307,7 @@ body{
   right: 14px;
   left: 0;
   margin: auto;
-  bottom: -30px;
+  bottom: -20px;
   width: 20px;
   height: 40px;
   z-index: 3000;
@@ -314,7 +315,7 @@ body{
 }
 .field-left{
   position: absolute;
-  left: -30px;
+  left: -20px;
   top: 0;
   bottom: 0;
   margin: auto;
@@ -325,7 +326,7 @@ body{
 }
 .field-right{
   position: absolute;
-  right: -15px;
+  right: -5px;
   width: 20px;
   height: 80px;
   z-index: 3000;
@@ -347,20 +348,27 @@ body{
   }
 }
 
+@media (max-height: 1120px) {
+  .playing-field{
+    top: 200px;
+    transform: scale(1.4);
+  }
+}
+
+
 @media (max-width: 1940px) {
 
   .hand-box{
-    height: 175px;
-    width: 280px;
+    height: 165px;
   }
   .hand{
-    right: -200px;
+    right: -100px;
   }
   .btn-hand{
     left: 30px;
   }
   .restart{
-    right: 50px;
+    right: 20px;
   }
 }
 
@@ -370,17 +378,15 @@ body{
     transform: scale(1);
   }
   .hand-box{
-    height: 175px;
-    width: 280px;
+
+
   }
-  .hand{
-    right: -200px;
-  }
+
   .btn-hand{
     left: 30px;
   }
   .restart{
-    right: 50px;
+
   }
   .top-menu-title, .top-menu-score, .top-menu-step{
     top: 5px;
@@ -399,13 +405,13 @@ body{
     left: 0;
   }
   .hand-box{
-    height: 175px;
+    height: 90px;
     width: 500px;
   }
   .hand{
     right: auto;
     top: auto;
-    bottom: -20px;
+    bottom: -10px;
     left: -70px;
   }
   .btn-hand{
@@ -420,9 +426,10 @@ body{
     position: absolute;
     width: 50px;
     height: 50px;
-    right: 0;
+    top: auto;
+    right: 50px;
     left: auto;
-    bottom: 0;
+    bottom: -100px;
   }
 
   .modal-content{
@@ -458,15 +465,31 @@ body{
   }
 }
 
-@media (max-height: 600px) {
+@media (max-width: 360px) {
   .playing-field{
-    top: 10px;
-    transform: scale(0.8);
+    left: -10px;
+  }
+}
+
+@media (max-height: 740px) {
+  .playing-field{
+    top: -10px;
+    transform: scale(0.6);
   }
   .top-menu{
     height: 30px;
   }
-  .top-menu-title, .top-menu-score, .top-menu-step{
+  .top-menu-step{
+    right: auto;
+    left: 14px;
+    top: 40px;
+    height: 30px;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 20px;
+
+  }
+  .top-menu-title, .top-menu-score{
     top: 5px;
     height: 30px;
     font-weight: 400;
@@ -493,3 +516,4 @@ body{
   }
 
 }
+
