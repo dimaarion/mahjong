@@ -1,12 +1,12 @@
- /**
- * Проверяет, заблокирована ли плитка другими костями.
- * @param {Object} tile - Плитка, которую проверяем {x, y, z}
- * @param {Array} allTiles - Массив всех оставшихся на поле плиток
- * @returns {boolean} - true, если плитку можно взять
- */
- export const isTileOpen = (tile, allTiles) => {
+
+export function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+export const isTileOpen = (tile, allTiles) => {
      // Стандартные размеры кости в координатной сетке
-     const TILE_WIDTH = 1;
+     const TILE_WIDTH = 1.02;
      const TILE_HEIGHT = 1;
 
      let isCoveredFromAbove = false;
@@ -45,6 +45,7 @@
                      hasRightNeighbor = true;
                  }
              }
+
          }
      }
 
@@ -53,6 +54,73 @@
      // И при этом у неё свободен ХОТЯ БЫ ОДИН БОК (левый или правый).
      return !isCoveredFromAbove && (!hasLeftNeighbor || !hasRightNeighbor);
  };
+
+ export const getTileNeighbors = (tile, allTiles) => {
+     // Стандартные размеры кости в координатной сетке
+     const TILE_WIDTH = 1.01;
+     const TILE_HEIGHT = 1.01;
+
+     const neighbors = {
+         left: false,
+         right: false,
+         top: false,
+         bottom: false
+     };
+
+     for (const other of allTiles) {
+
+         // Пропускаем саму себя и плитки на других слоях Z
+         if (other.id === tile.id || other.z !== tile.z) continue;
+
+         // 1. ПРОВЕРКА ДЛЯ ЛЕВОГО И ПРАВОГО СОСЕДЕЙ (в одном горизонтальном ряду)
+         // Плитки пересекаются по вертикали (yOverlap), значит стоят в одном ряду
+         const yOverlap = Math.abs(other.y - tile.y) < 1;
+
+         if (yOverlap) {
+
+             // Сосед слева (дистанция меньше ширины плитки)
+             if (other.x < tile.x && (tile.x - other.x) < TILE_WIDTH ) {
+                 neighbors.left = true;
+             }
+             // Сосед справа (дистанция меньше ширины плитки)
+             if (other.x > tile.x && (other.x - tile.x) < TILE_WIDTH) {
+                 neighbors.right = true;
+             }
+         }
+
+         // 2. ПРОВЕРКА ДЛЯ ВЕРХНЕГО И НИЖНЕГО СОСЕДЕЙ (в одном вертикальном столбце)
+         // Плитки пересекаются по горизонтали (xOverlap), значит стоят друг над другом
+         const xOverlap = Math.abs(other.x - tile.x) < 1;
+         if (xOverlap) {
+             // Сосед сверху (по оси Y координата меньше, если 0 у вас вверху экрана)
+             // Внимание: проверьте, куда растет Y в вашей системе координат.
+             // Если 0 внизу, то поменяйте top и bottom местами.
+             if (other.y < tile.y && (tile.y - other.y) < TILE_HEIGHT) {
+                 neighbors.top = true;
+             }
+             // Сосед снизу
+             if (other.y > tile.y && (other.y - tile.y) < TILE_HEIGHT) {
+                 neighbors.bottom = true;
+             }
+         }
+
+         if(tile.x <= 0){
+             neighbors.left = true;
+         }
+         if(tile.x >= 5){
+             neighbors.right = true;
+         }
+         if(tile.y >= 5){
+             neighbors.bottom = true;
+         }
+         if(tile.y <= 0){
+             neighbors.top = true;
+         }
+     }
+
+     return neighbors;
+ };
+
 export function generateMahjongTiles(width = 6, height = 4, levels = 3, emptyChance = 0.25) {
     const tiles = [];
     let idCounter = 1;
@@ -234,13 +302,15 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
      let maxLayers = 1;
      if (levelNumber > 3) maxLayers = 2;
      if (levelNumber > 15) maxLayers = 3;
+     if (levelNumber > 30) maxLayers = 5;
 
      // 2. Количество уникальных картинок (типов костей) на уровне
      // На 1 уровне — 4 типа, к 20 уровню — максимум 16 типов
-     const uniqueTypesCount = Math.min(16, 4 + Math.floor(levelNumber / 2));
+     const uniqueTypesCount = Math.min(66, 4 + Math.floor(levelNumber));
+
 
      // 3. Лимит тактических ходов (сдвиги и молотки)
-     const shiftsLimit = levelNumber <= 3 ? 99 : Math.max(3, 7 - Math.floor(levelNumber / 4));
+     const shiftsLimit = levelNumber <= 3 ? 3 : Math.max(3, 7 - Math.floor(levelNumber / 4));
      const hammersLimit = levelNumber < 4 ? 0 : (levelNumber > 15 ? 2 : 1);
 
      // 4. Плотность заполнения пирамиды (от 0.6 до 0.9)

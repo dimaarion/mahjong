@@ -16,6 +16,7 @@ export default function TopMenu({score = 0, deck = 0, combo= 0}){
 
     return (
         <div className={"top-menu"}>
+            <div className={"bg-top-menu"}/>
             <div className={"top-menu-title"}>
                 Маджонг
             </div>
@@ -26,7 +27,12 @@ export default function TopMenu({score = 0, deck = 0, combo= 0}){
                 </animated.div>
             </div>
             <div className={"top-menu-step"}>
-                Шаги {deck}
+                Уровень {deck}
+            </div>
+            <div className={"settings-btn"}>
+                <div className={"btn-hover"} />
+                <img src={"./img/settings.png"}/>
+
             </div>
         </div>
     )

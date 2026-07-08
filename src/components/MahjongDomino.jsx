@@ -36,12 +36,12 @@ import TopMenu from "../TopMenu.jsx";
 import level from "../assets/level.json";
 import Modal from "../Modal.jsx";
 import {
-    generateOrganicPyramid, getLevelDifficultyConfig,
+    generateOrganicPyramid, getLevelDifficultyConfig, getRandomInt, getTileNeighbors,
     isTileOpen
 } from "../action.js";
+import {useSpring,animated} from "@react-spring/web";
+import {useStore} from "../store.js";
 
-
-// Список типов костей с уникальными идентификаторами для SVG-рендеринга
 const TILE_TYPES = [
     { id: 'dzy', color: '#2ecc71', label: 'dzy'},
     { id: 'dzan', color: '#2ecc71', label: 'dzan'},
@@ -80,497 +80,331 @@ const TILE_TYPES = [
 
 const TileSvg = ({ typeId }) => {
     switch (typeId) {
-        case 'dzy':
-            return <Dzy />
-        case 'dzan':
-            return <Dzan />
-        case 'di':
-            return <Di />
-        case 'cini':
-            return <Cini />
-        case 'fan':
-            return <Fan />
-        case 'huo':
-            return <Huo />
-        case 'duo':
-            return <Duo />
-        case 'cze':
-            return <Cze />
-        case 'diani':
-            return <Diani />
-        case 'Pearl':
-            return <Pearl />
-        case 'Pine':
-            return <Pine />
-        case 'Phoenix':
-            return <Phoenix />
-        case 'Jade':
-            return <Jade />
-        case 'Dragon':
-            return <Dragon />
-        case 'Peach':
-            return <Peach />
-        case 'Insect':
-            return <Insect />
-        case 'Tiger':
-            return <Tiger />
-        case 'Unicorn':
-            return <Unicorn />
-        case 'Peacock':
-            return <Peacock />
-        case 'Duck':
-            return <Duck />
-        case 'Frog':
-            return <Frog />
-        case 'Carp':
-            return <Carp />
-        case 'Lotus':
-            return <Lotus />
-        case 'Water':
-            return <Water />
-        case 'Turtle':
-            return <Turtle />
-        case 'Mushroom':
-            return <Mushroom />
-        case 'Willow':
-            return <Willow />
-        case 'Centre':
-            return <Centre />
-        case 'Beginning':
-            return <Beginning />
-        case 'White':
-            return <White />
-        case 'Chrysanthemum':
-            return <Chrysanthemum />
-        case 'Orchid':
-            return <Orchid />
-        case 'Plum':
-            return <Plum />
-        default:
-            return null;
+        case 'dzy': return <Dzy />;
+        case 'dzan': return <Dzan />;
+        case 'di': return <Di />;
+        case 'cini': return <Cini />;
+        case 'fan': return <Fan />;
+        case 'huo': return <Huo />;
+        case 'duo': return <Duo />;
+        case 'cze': return <Cze />;
+        case 'diani': return <Diani />;
+        case 'Pearl': return <Pearl />;
+        case 'Pine': return <Pine />;
+        case 'Phoenix': return <Phoenix />;
+        case 'Jade': return <Jade />;
+        case 'Dragon': return <Dragon />;
+        case 'Peach': return <Peach />;
+        case 'Insect': return <Insect />;
+        case 'Tiger': return <Tiger />;
+        case 'Unicorn': return <Unicorn />;
+        case 'Peacock': return <Peacock />;
+        case 'Duck': return <Duck />;
+        case 'Frog': return <Frog />;
+        case 'Carp': return <Carp />;
+        case 'Lotus': return <Lotus />;
+        case 'Water': return <Water />;
+        case 'Turtle': return <Turtle />;
+        case 'Mushroom': return <Mushroom />;
+        case 'Willow': return <Willow />;
+        case 'Centre': return <Centre />;
+        case 'Beginning': return <Beginning />;
+        case 'White': return <White />;
+        case 'Chrysanthemum': return <Chrysanthemum />;
+        case 'Orchid': return <Orchid />;
+        case 'Plum': return <Plum />;
+        default: return null;
     }
 };
 
 const shuffle = (array) => [...array].sort(() => Math.random() - 0.5);
 
 export default function MahjongDomino() {
-    const [boardTiles, setBoardTiles] = useState([]);
-    const [hand, setHand] = useState([]);
-    const [deck, setDeck] = useState([]);
-    const [selectedHandId, setSelectedHandId] = useState(null);
+    const boardTiles = useStore((state) => state.boardTiles);
 
+    const [hand, setHand] = useState([]);
+    const [selectedHandId, setSelectedHandId] = useState(null);
     const [score, setScore] = useState(0);
     const [combo, setCombo] = useState(1);
     const [lastMatchTime, setLastMatchTime] = useState(0);
-    const [scale, setScale] = useState(1);
-    const boardRef = useRef(null);
     const [currentLevel, setCurrentLevel] = useState(1);
     const [handId, setHandId] = useState(null);
-    const [direct, setDirect] = useState("");
+    const [direct, setDirect] = useState(false);
+    const [crash, setCrash] = useState(false);
     const [countDirect, setCountDirect] = useState(3);
-    const [complexity, setComplexity] = useState(2)
+    const [countCrash, setCountCrash] = useState(1);
+    const stepLength = 1;
 
+    // Рефы для контроля асинхронных операций
+    const globalTileIdCounter = useRef(0);
+    const activeTimeouts = useRef([]);
 
+    // Очистка таймаутов при размонтировании компонента
     useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 600) {
-                const calculatedScale = (window.innerWidth - 20) / 480;
-                setScale(Math.max(0.45, Math.min(calculatedScale, 1)));
-            } else {
-                setScale(1);
-            }
+        return () => {
+            activeTimeouts.current.forEach(clearTimeout);
         };
-        window.addEventListener('resize', handleResize);
-        handleResize();
-        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     useEffect(() => {
         startGame();
-    }, []);
+    }, [currentLevel]);
 
-    useEffect(() => {
-        let scroll = document.querySelector(".hand-box")
-        if(scroll){
-            scroll.scrollTop = scroll.scrollHeight
-        }
-
-    }, [hand]);
+    const crashAnimate = useSpring({
+        from: { transform: 'rotate(0deg) translate(-10px, -10px)' },
+        to: [{ transform: 'rotate(45deg) translate(-10px, -10px)' }, { transform: 'rotate(0deg) translate(-10px, -10px)' }],
+        config: { duration: 1000 },
+        loop: true
+    });
 
     const startGame = () => {
-        // Раскладка для уровня
-        const levelData = level.levels[currentLevel];
+        // Очищаем все незавершенные таймауты анимаций прошлой игры
+        activeTimeouts.current.forEach(clearTimeout);
+        activeTimeouts.current = [];
+
         const config = getLevelDifficultyConfig(currentLevel);
         const boardLayout = generateOrganicPyramid(config.baseSize, config.maxLayers, config.fillDensity);
 
-        // 1. Ограничиваем пул уникальных типов для этого уровня
-        const UNIQUE_TYPES_COUNT = boardLayout.length / complexity;
+        const UNIQUE_TYPES_COUNT = config.uniqueTypesCount;
         const selectedTypes = shuffle(TILE_TYPES).slice(0, UNIQUE_TYPES_COUNT);
 
-        // 2. Заполняем поле костями из выбранных типов
-        let tileIdCounter = 0;
         const board = boardLayout.map((pos, index) => {
             const type = selectedTypes[index % selectedTypes.length];
             return {
-                id: tileIdCounter++,
+                // Используем реф счетчика, который НИКОГДА не сбрасывается в 0 во время сессии
+                id: globalTileIdCounter.current++,
                 typeId: type.id,
                 ...pos
             };
         });
 
-        // 3. Собираем список ТОЛЬКО тех ID типов, которые попали на стол
-        const activeTypeIdsOnBoard = Array.from(new Set(board.map(tile => tile.typeId)));
-
-        // 4. Формируем руку и колоду строго ИЗ ТЕХ ЖЕ типов, что есть на столе.
-        // Нам нужно заполнить 7 мест в руке + сделать запас в колоду (например, еще 15 костей).
-        // Итого нужно сгенерировать 22 кости.
-        let offBoardPool = [];
-        const neededOffBoardCount = boardLayout.length;
-
-        for (let i = 0; i < neededOffBoardCount; i++) {
-            // Берем тип из тех, что гарантированно присутствуют на доске
-            const randomActiveTypeId = activeTypeIdsOnBoard[i % activeTypeIdsOnBoard.length];
-            offBoardPool.push({
-                id: tileIdCounter++,
-                typeId: randomActiveTypeId
-            });
-        }
-
-        // Перемешиваем вне-игровой пул
+        // Глубокое копирование объектов
+        let offBoardPool = board.filter((el) => el.typeId).map((el) => ({ ...el }));
         offBoardPool = shuffle(offBoardPool);
 
-        // Распределяем на стартовую руку и колоду добора
-        const initialHand = offBoardPool.slice(0, 8);
-        const actualDeck = offBoardPool.slice(8);
-
-        // 5. Обновляем стейты игры (без колоды добора)
-        setBoardTiles(board);
-        setHand(initialHand);
-        setDeck(actualDeck);
+        useStore.getState().setBoardTiles(board);
+        setHand(offBoardPool);
         setSelectedHandId(null);
+        setHandId(null);
         setScore(0);
         setCombo(1);
         setLastMatchTime(Date.now());
-        setCountDirect(Math.floor(boardLayout.length / 6));
+        setCountDirect(config.shiftsLimit);
+        setCountCrash(config.hammersLimit);
+        setCrash(false);
+        setDirect(false);
     };
-
-
-
-
 
     const handleHandTileClick = (id) => {
         setSelectedHandId(id === selectedHandId ? null : id);
-    };
-
-    // ФУНКЦИЯ ДОБОРА КОСТИ В РУКУ
-    const drawTileToHand = () => {
-      //  if (deck.length === 0) return; // Колода пуст
-
-        // Перемешиваем копию колоды
-       // let newDeck = shuffle(deck);
-
-
-        // Обновляем состояние: только колода
-       // setDeck(newDeck);
-
-        // Сбрасываем комбо скорости
-       // setCombo(1);
+        setCrash(false);
+        setDirect(false);
     };
 
     const handleBoardTileClick = (boardTile) => {
+        // === ЛОГИКА МОЛОТКА (CRASH) ===
+        if (crash && countCrash > 0) {
+            setHandId(boardTile.id);
+            setCountCrash(prev => prev - 1);
 
+            const timeOut = setTimeout(() => {
+                const currentTiles = useStore.getState().boardTiles;
+                // Защита: Проверяем, существует ли плитка с таким ID на текущем игровом поле
+                if (!currentTiles.some(t => t.id === boardTile.id)) return;
+
+                const newBoard = currentTiles.filter(t => t.id !== boardTile.id);
+                useStore.getState().setBoardTiles(newBoard);
+            }, 500);
+
+            activeTimeouts.current.push(timeOut);
+            return;
+        }
+
+        // === ЛОГИКА ОБЫЧНОГО КЛИКА (МАТЧ С РУКОЙ) ===
         if (!isTileOpen(boardTile, boardTiles) || selectedHandId === null) return;
 
         const handTile = hand.find(t => t.id === selectedHandId);
+        if (!handTile) return;
 
         if (handTile.typeId === boardTile.typeId) {
             const currentTime = Date.now();
             const timePassed = (currentTime - lastMatchTime) / 1000;
 
-            let newCombo;
-            if (timePassed < 5) {
-                newCombo = Math.min(combo + 1, 5);
-            } else {
-                newCombo = 1;
-            }
-
+            const newCombo = timePassed < 5 ? Math.min(combo + 1, 5) : 1;
             const basePoints = (boardTile.z + 1) * 10;
             const pointsGained = basePoints * newCombo;
-            setHandId(boardTile.id)
-            setTimeout(()=>{
-                const newBoard = boardTiles.filter(t => t.id !== boardTile.id);
-                let newHand = hand.filter(t => t.id !== handTile.id);
-                let newDeck = [...deck];
-                // Автоматический добор происходит только если в руке стало МЕНЬШЕ 7 костей
-                if (newHand.length < 8 && newDeck.length > 0) {
-                    newHand.push(newDeck.shift());
-                }
 
-                setBoardTiles(newBoard);
-                setHand(newHand);
-                setDeck(newDeck);
+            setHandId(boardTile.id);
+
+            const timeOut = setTimeout(() => {
+                const currentTiles = useStore.getState().boardTiles;
+                // Защита: Если за время анимации игру перезапустили — выходим
+                if (!currentTiles.some(t => t.id === boardTile.id)) return;
+
+                const newBoard = currentTiles.filter(t => t.id !== boardTile.id);
+                useStore.getState().setBoardTiles(newBoard);
+
+                setHand(prevHand => prevHand.filter(t => t.id !== handTile.id));
                 setSelectedHandId(null);
                 setScore(prev => prev + pointsGained);
                 setCombo(newCombo);
                 setLastMatchTime(currentTime);
-            },500)
+            }, 500);
 
-
-
+            activeTimeouts.current.push(timeOut);
         } else {
             setSelectedHandId(null);
             setCombo(1);
         }
     };
-let s = true
-    if(s){
-        return <>
+
+    const crashClick = () => {
+        setSelectedHandId(null);
+        setCombo(1);
+        setCrash(true);
+        setDirect(false);
+    };
+
+    const directClick = () => {
+        setDirect(true);
+        setCrash(false);
+        setSelectedHandId(null);
+        setCombo(1);
+    };
+
+    return (
+        <>
             <div>
-                <img className={"main-bg"} src={"./img/bg-game.png"} />
+                <img className={"main-bg"} src={"./img/bg-game.png"} alt="background" />
             </div>
             <div className={"main"}>
-                <TopMenu score={score} deck={countDirect} combo={combo} />
-                <div  className={"playing-field"}>
+                <TopMenu score={score} deck={currentLevel} combo={combo} />
+                <div className={"playing-field"}>
                     {boardTiles.map(tile => {
                         const isOpen = isTileOpen(tile, boardTiles);
                         const canBeTarget = isOpen && selectedHandId !== null;
-                        return  <div
-                            className={"stone-field"}
-                            key={tile.id}
-                            onPointerDown={() => {
-                                handleBoardTileClick(tile)
-                            }}
-                            style={{
-                                ...styles.tile,
-                                position: 'absolute',
-                                left: `${tile.x * 60}px`,
-                                top: `${tile.y * 80 - (tile.z * 10)}px`, // Смещение вверх для 3D-эффекта объема
-                                zIndex: tile.z * 10 + Math.floor(tile.y), // Чем выше слой и чем ниже плитка на экране, тем выше zIndex
-                                boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
-                                ...(isOpen ? styles.tileOpen : styles.tileLocked),
-                                ...(canBeTarget ? styles.tileHighlight : {}),
-                                ...(handId === tile.id? {transform: 'scale(0)',transition:'.5s'}:{})
-                            }}
-                        >
-                            <div style={styles.svgContainer}>
-                                <TileSvg typeId={tile.typeId} />
-                                <div onPointerDown={() => {
-                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
-                                        if (countDirect > 0) {
-                                            setCountDirect((countDirect) => countDirect - 1)
-                                        }
-                                        const d = boardTiles.map((el) => {
-                                            if (el.id === tile.id) {
-                                                el.y = el.y - 0.5
-                                            }
-                                            return el
-                                        });
-                                        setBoardTiles(d);
-                                    }
-                                    setDirect("top")
-                                }} className={"field-top"}>
-                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(-90deg)'}} src={"./img/arrow.png"}/>:""}
-                                </div>
-                                <div onPointerDown={() => {
-                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
-                                        if (countDirect > 0) {
-                                            setCountDirect((countDirect) => countDirect - 1)
-                                        }
-                                        const d = boardTiles.map((el)=>{
-                                            if(el.id === tile.id){
-                                                el.x = el.x - 0.5
-                                            }
-                                            return el
-                                        });
-                                        setBoardTiles(d);
-                                    }
-                                    setDirect("left")
-                                }} className={"field-left"} >
-                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(-180deg)'}} src={"./img/arrow.png"}/>:""}
-                                </div>
-                                <div onPointerDown={() => {
-                                    if (isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0) {
-                                        if (countDirect > 0) {
-                                            setCountDirect((countDirect) => countDirect - 1)
-                                        }
-                                        const d = boardTiles.map((el)=>{
-                                            if(el.id === tile.id){
-                                                el.x = el.x + 0.5
-                                            }
-                                            return el
-                                        });
-                                        setBoardTiles(d);
-                                    }
-                                    setDirect("right")
-                                }} className={"field-right"} >
-                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(0deg)'}} src={"./img/arrow.png"}/>:""}
-                                </div>
-                                <div onPointerDown={()=>{
-                                    if(isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0){
-                                        if(countDirect > 0){
-                                            setCountDirect((countDirect)=>countDirect - 1)
-                                        }
-                                        const d = boardTiles.map((el)=>{
-                                            if(el.id === tile.id){
-                                                el.y = el.y + 0.5
-                                            }
-                                            return el
-                                        });
-                                        setBoardTiles(d);
-                                    }
-                                    setDirect("bottom")
-                                }} className={"field-bottom"} >
-                                    {isTileOpen(tile, boardTiles) && selectedHandId === null && countDirect > 0?<img  className={"arrow"} style={{transform:'rotate(90deg)'}} src={"./img/arrow.png"}/>:""}
+                        return (
+                            <div
+                                className={"stone-field"}
+                                key={tile.id + "board"}
+                                onPointerDown={() => handleBoardTileClick(tile)}
+                                style={{
+                                    ...styles.tile,
+                                    position: 'absolute',
+                                    left: `${tile.x * 60}px`,
+                                    top: `${tile.y * 80 - (tile.z * 10)}px`,
+                                    zIndex: tile.z * 10 + Math.floor(tile.y),
+                                    boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
+                                    ...(isOpen ? styles.tileOpen : styles.tileLocked),
+                                    ...(canBeTarget ? styles.tileHighlight : {}),
+                                    ...(handId === tile.id ? { transform: 'scale(0)', transition: '.5s' } : {})
+                                }}
+                            >
+                                <div style={styles.svgContainer}>
+                                    <TileSvg typeId={tile.typeId} />
+                                    {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0 ? (
+                                        <animated.div style={crashAnimate} className={"crash_2"}>
+                                            <img src={"./img/crash_2.png"} alt="crash effect" />
+                                        </animated.div>
+                                    ) : ""}
 
+                                    {/* Смещения плиток (Инструмент Направления) */}
+                                    {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
+                                            setCountDirect(prev => prev - 1);
+                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
+                                            useStore.getState().setBoardTiles(d);
+                                        }
+                                    }} className={"field-top"}>
+                                         <img className={"arrow"} style={{ transform: 'rotate(-90deg)' }} src={"./img/arrow.png"} alt="up" />
+                                    </div>}
+
+                                    {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
+                                            setCountDirect(prev => prev - 1);
+                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
+                                            useStore.getState().setBoardTiles(d);
+                                        }
+                                    }} className={"field-left"}>
+                                         <img className={"arrow"} style={{ transform: 'rotate(-180deg)' }} src={"./img/arrow.png"} alt="left" />
+                                    </div>}
+
+                                    {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
+                                            setCountDirect(prev => prev - 1);
+                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
+                                            useStore.getState().setBoardTiles(d);
+                                        }
+                                    }} className={"field-right"}>
+                                         <img className={"arrow"} style={{ transform: 'rotate(0deg)' }} src={"./img/arrow.png"} alt="right" />
+                                    </div>}
+
+                                    {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
+                                            setCountDirect(prev => prev - 1);
+                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
+                                            useStore.getState().setBoardTiles(d);
+                                        }
+                                    }} className={"field-bottom"}>
+                                        <img className={"arrow"} style={{ transform: 'rotate(90deg)' }} src={"./img/arrow.png"} alt="down" />
+                                    </div>}
                                 </div>
                             </div>
-                        </div>
+                        );
                     })}
-                    <div className={"hand"}>
-                        {boardTiles.length !== 0  && (
-                        <div className={"hand-box"}>
-                            {hand.map(tile => {
-                                const isSelected = tile.id === selectedHandId;
-                                return (
-                                    <div
-                                        key={tile.id}
-                                        style={{
-                                            ...styles.handTile,
-                                        }}
-                                    >
-                                        <div className={"hand-item"} onPointerDown={() => handleHandTileClick(tile.id)} >
-                                            <TileSvg typeId={tile.typeId} />
-                                            <div style={isSelected?{
-                                                boxShadow:'0 0 4px 4px #d12613',
-                                            }:{}} className={"hand-item-effect"}/>
-                                        </div>
 
-                                    </div>
-                                );
-                            })}
-                        </div>  )}
+                    <div className={"hand"}>
+                        {boardTiles.length !== 0 && (
+                            <div className={"hand-box"}>
+                                {hand.map(tile => {
+                                    const isSelected = tile.id === selectedHandId;
+                                    return (
+                                        <div className={"handTile"} key={tile.id}>
+                                            <div className={"hand-item"} onPointerDown={() => handleHandTileClick(tile.id)}>
+                                                <TileSvg typeId={tile.typeId} />
+                                                <div style={isSelected ? { boxShadow: '0 0 4px 4px #d12613' } : {}} className={"hand-item-effect"} />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {boardTiles.length !== 0 && (
-                        <div className={"restart"} onClick={startGame}>
-                            <img onClick={drawTileToHand} src={"./img/restart.png"}/>
-                        </div>
+                            <div>
+                                <div className={"direct"} onClick={directClick}>
+                                    <img src={"./img/direct.png"} title={"Переместить камень"} alt="direct" />
+                                    <div style={direct ? { opacity: 1 } : {}} className={"btn-hover"} />
+                                    <div className={"btn-counter"}>{countDirect}</div>
+                                </div>
+                                <div className={"crash"} onClick={crashClick} title={"Разбить камень"}>
+                                    <img src={"./img/crash.png"} alt="crash" />
+                                    <div style={crash ? { opacity: 1 } : {}} className={"btn-hover"} />
+                                    <div className={"btn-counter"}>{countCrash}</div>
+                                </div>
+                                <div className={"restart"} onClick={(e) => {
+                                    e.stopPropagation();
+                                    startGame();
+                                }} title={"Перезапустить уровень"}>
+                                    <div className={"btn-hover"} />
+                                    <img src={"./img/restart.png"} alt="restart" />
+                                </div>
+                            </div>
                         )}
                     </div>
-
                 </div>
                 {boardTiles.length === 0 && (
-                    <Modal startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel}  />
+                    <Modal startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
                 )}
-
             </div>
         </>
-    }else {
-        return (
-            <div style={styles.screenWrapper}>
-                <header style={styles.header}>
-                    <div style={styles.title}>ВЕКТОРНЫЙ МАДЖОНГ</div>
-
-                    <div style={styles.scoreContainer}>
-                        <div style={styles.scoreText}>Счет: <span style={{ color: '#dfb76c' }}>{score}</span></div>
-                        {combo > 1 && <div style={styles.comboBadge}>Комбо: x{combo} 🔥</div>}
-                    </div>
-
-                    <div style={styles.statsDeck}>Колода: <span>{deck.length} шт.</span></div>
-                    <button onClick={startGame} style={styles.restartBtn}>Заново</button>
-                </header>
-
-                <main style={{ ...styles.gameZone, transform: `scale(${scale})` }} ref={boardRef}>
-                    <div style={styles.board}>
-                        {boardTiles.map(tile => {
-                            const isOpen = isTileOpen(tile, boardTiles);
-                            const canBeTarget = isOpen && selectedHandId !== null;
-
-                            return (
-                                <div
-                                    key={tile.id}
-                                    onClick={() => handleBoardTileClick(tile)}
-                                    style={{
-                                        ...styles.tile,
-                                        left: `${tile.x * 64 + tile.z * 6}px`,
-                                        top: `${tile.y * 82 - tile.z * 6}px`,
-                                        zIndex: tile.z * 10 + Math.floor(tile.y),
-                                       /* boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,*/
-                                        ...(isOpen ? styles.tileOpen : styles.tileLocked),
-                                        ...(canBeTarget ? styles.tileHighlight : {})
-                                    }}
-                                >
-                                    <div style={styles.svgContainer}>
-                                        <TileSvg typeId={tile.typeId} />
-
-                                    </div>
-                                </div>
-                            );
-                        })}
-
-                        {boardTiles.length === 0 && (
-                            <div style={styles.winOverlay}>
-                                <div>🎉 ПОБЕДА! 🎉</div>
-                                <div style={{ fontSize: '20px', marginTop: '10px', color: '#fff' }}>Ваш счет: {score}</div>
-                            </div>
-                        )}
-                    </div>
-                </main>
-
-                <footer style={styles.footer}>
-                    <div style={styles.rackLabel}>Ваша рука (нажмите на колоду слева для добора кости):</div>
-                    <div style={styles.bambooRack}>
-
-                        {/* ИНТЕРАКТИВНАЯ КНОПКА-КОЛОДА ДЛЯ ДОБОРА */}
-                        <div
-                            onClick={drawTileToHand}
-                            style={{
-                                ...styles.deckDrawButton,
-                                opacity: deck.length > 0 ? 1 : 0.4,
-                                cursor: deck.length > 0 ? 'pointer' : 'not-allowed'
-                            }}
-                            title={hand.length >= 8 ? "Добор при полной руке стоит 15 очков!" : "Взять кость"}
-                        >
-                            <div style={styles.deckDrawInside}>
-                                <span>🎴</span>
-                                <span style={{fontSize: '11px', marginTop: '2px'}}>ВЗЯТЬ</span>
-                                {hand.length >= 7 && deck.length > 0 && <span style={styles.penaltyTip}>-15</span>}
-                            </div>
-                        </div>
-
-                        {/* КОСТИ В РУКЕ */}
-                        <div style={styles.handTilesRow}>
-                            {hand.map(tile => {
-                                const isSelected = tile.id === selectedHandId;
-                                return (
-                                    <div
-                                        key={tile.id}
-                                        onClick={() => handleHandTileClick(tile.id)}
-                                        style={{
-                                            ...styles.handTile,
-                                            transform: isSelected ? 'translateY(-15px) scale(1.05)' : 'translateY(0)',
-                                            boxShadow: isSelected ? '0 0 18px #ff4d4d, 0 10px 15px rgba(0,0,0,0.5)' : '0 6px 8px rgba(0,0,0,0.4)',
-                                            border: isSelected ? '2px solid #ff4d4d' : '1px solid #dcd9b9'
-                                        }}
-                                    >
-                                        <div style={styles.svgContainer}>
-                                            <TileSvg typeId={tile.typeId} />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {hand.length === 0 && boardTiles.length > 0 && deck.length === 0 && (
-                            <div style={{ color: '#ff4d4d', fontWeight: 'bold', fontSize: '14px' }}>Ходов больше нет!</div>
-                        )}
-                    </div>
-                </footer>
-            </div>
-        );
-    }
-
-
+    );
 }
+
 
 const styles = {
     screenWrapper: {
@@ -677,7 +511,7 @@ const styles = {
     },
     tileLocked: {
         opacity: 1,
-        filter: 'brightness(0.9)',
+        filter: 'brightness(0.95)',
         cursor: 'pointer'
     },
     tileHighlight: {
@@ -765,8 +599,8 @@ const styles = {
     handTile: {
         width: '62px',
         height: '85px',
-        cursor:"pointer"
-
+        cursor:"pointer",
+        float:"right"
 
 
     },

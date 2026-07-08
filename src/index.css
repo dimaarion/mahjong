@@ -7,6 +7,68 @@ body{
   background: #0A0100;
 }
 
+.load{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.load-rotate{
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  width: 256px;
+  height: 256px;
+  z-index: 2;
+}
+
+.load-resize{
+  position: absolute;
+  top: 450px;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  width: 800px;
+  height: 90px;
+  z-index: 3;
+}
+
+.load-resize-item{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+.load-resize-item-2{
+  position: absolute;
+  top: 2px;
+  left: -70px;
+  bottom: 0;
+  margin: auto;
+  width: 800px;
+  height: 40px;
+}
+.load-img{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+}
+
 .main{
   position: fixed;
   top: 0;
@@ -31,6 +93,34 @@ body{
   width: 100%;
   border-bottom: 8px solid #73583F;
   box-shadow: 0 4px 4px 4px rgba(0,0,0,0.25);
+
+}
+
+.settings-btn{
+  position: absolute;
+  right: 20px;
+  bottom: -100px;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+}
+.settings-btn img{
+  width: 100%;
+  height: 100%;
+}
+
+.bg-top-menu{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  background: #0A0100;
+  opacity: 0.8;
+
 }
 
 .text-family{
@@ -124,7 +214,7 @@ body{
 .hand{
   position: absolute;
   left: auto;
-  right: -100px;
+  right: -120px;
   top: -60px;
   bottom: 50px;
   display: flex;
@@ -151,7 +241,7 @@ body{
 .stone-field .arrow{
   opacity: 0;
   transition: 1s;
-  visibility: hidden;
+
 }
 .arrow {
    width: 30px;
@@ -166,17 +256,33 @@ body{
 
 .stone-field:hover .arrow{
   opacity: 1;
-  transition: 1s;
-  visibility: visible;
+  transition: .5s;
+
 }
+
+.stone-field:hover .crash_2{
+  opacity: 1;
+  transition: .5s;
+
+}
+.handTile{
+  width: 62px;
+  height: 85px;
+  cursor:pointer;
+
+}
+
+
 .hand-box{
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-areas: "a a a a";
+  grid-auto-columns: 63px;
   margin: auto;
   height: 165px;
   width: 248px;
   transform: scale(0.8);
   background: #1c1b1b;
+  overflow: hidden;
 
 }
 
@@ -189,17 +295,88 @@ body{
   bottom: 120px;
 
 }
-.restart{
+.restart, .crash, .direct{
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 20px;
-  left: auto;
   bottom: 120px;
+  left: auto;
+
 }
-.btn-hand img, .restart img{
+
+.restart{
+  right: 30px;
+}
+
+.crash{
+  right: 105px;
+}
+
+.direct{
+  right: 180px;
+}
+
+.btn-hover{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   width: 100%;
+  height: 100%;
+  background: #e0e60c;
+  border-radius: 50px;
+  box-shadow: 0 0 25px #e0e60c;
+  opacity: 0;
+}
+
+.restart:hover  .btn-hover{
+  opacity: 1;
+}
+
+.crash:hover  .btn-hover{
+  opacity: 1;
+}
+.direct:hover  .btn-hover{
+  opacity: 1;
+}
+
+.settings-btn:hover  .btn-hover{
+  opacity: 1;
+}
+
+.crash_2{
+  position: absolute;
+  left: 20px;
+  width: 50px;
+  opacity: 0;
+}
+.crash_2 img{
+  width: 100%;
+  height: 100%;
+}
+
+.btn-counter{
+  position: absolute;
+  top: -11px;
+  right: -11px;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  color: #d12613;
+  background: #1c1b1b;
+  text-align: center;
+  border-radius:15px ;
+
+}
+
+.btn-hand img, .restart img, .crash img, .direct img, .settings-btn img{
+  width: 100%;
+  height: 100%;
+  position: relative;
   cursor: pointer;
+  z-index: 1;
+
 }
 
 .modal, .modal-bg{
@@ -362,13 +539,13 @@ body{
     height: 165px;
   }
   .hand{
-    right: -100px;
+    right: -120px;
   }
   .btn-hand{
     left: 30px;
   }
   .restart{
-    right: 20px;
+
   }
 }
 
@@ -407,6 +584,7 @@ body{
   .hand-box{
     height: 90px;
     width: 500px;
+    grid-template-areas: "a a a a a a a a";
   }
   .hand{
     right: auto;
@@ -422,15 +600,28 @@ body{
     left: auto;
     bottom: -25px;
   }
+
+  .restart, .crash, .direct{
+    top: auto;
+    bottom: -100px;
+  }
+
   .restart{
     position: absolute;
     width: 50px;
     height: 50px;
-    top: auto;
-    right: 50px;
+    right: 60px;
     left: auto;
-    bottom: -100px;
   }
+
+  .direct{
+    right: 400px;
+  }
+
+  .crash{
+    right: 230px;
+  }
+
 
   .modal-content{
     width: 100%;
@@ -463,6 +654,17 @@ body{
     top: 40px;
     width: auto;
   }
+
+  .settings-btn{
+    position: absolute;
+    right: 8px;
+    bottom: -75px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+  }
+
+
 }
 
 @media (max-width: 360px) {
