@@ -33,14 +33,14 @@ import Chrysanthemum from "./Chrysanthemum.jsx";
 import Orchid from "./Orchid.jsx";
 import Plum from "./Plum.jsx";
 import TopMenu from "../TopMenu.jsx";
-import level from "../assets/level.json";
 import Modal from "../Modal.jsx";
 import {
-    generateOrganicPyramid, getLevelDifficultyConfig, getRandomInt, getTileNeighbors,
-    isTileOpen
+    generateOrganicPyramid, getLevelDifficultyConfig, getTileNeighbors,
+    isTileOpen, useGameAudio
 } from "../action.js";
 import {useSpring,animated} from "@react-spring/web";
 import {useStore} from "../store.js";
+import Settings from "../Settings.jsx";
 
 const TILE_TYPES = [
     { id: 'dzy', color: '#2ecc71', label: 'dzy'},
@@ -121,13 +121,16 @@ const shuffle = (array) => [...array].sort(() => Math.random() - 0.5);
 
 export default function MahjongDomino() {
     const boardTiles = useStore((state) => state.boardTiles);
+    const load = useStore((state) => state.load);
+    const settingsOpen = useStore((state) => state.settingsOpen);
+    const currentLevel = useStore((state) => state.currentLevel);
+    const setCurrentLevel = useStore((state) => state.setCurrentLevel);
 
     const [hand, setHand] = useState([]);
     const [selectedHandId, setSelectedHandId] = useState(null);
     const [score, setScore] = useState(0);
     const [combo, setCombo] = useState(1);
     const [lastMatchTime, setLastMatchTime] = useState(0);
-    const [currentLevel, setCurrentLevel] = useState(1);
     const [handId, setHandId] = useState(null);
     const [direct, setDirect] = useState(false);
     const [crash, setCrash] = useState(false);
@@ -138,6 +141,8 @@ export default function MahjongDomino() {
     // Рефы для контроля асинхронных операций
     const globalTileIdCounter = useRef(0);
     const activeTimeouts = useRef([]);
+    const { handEffect } = useGameAudio();
+
 
     // Очистка таймаутов при размонтировании компонента
     useEffect(() => {
@@ -199,6 +204,7 @@ export default function MahjongDomino() {
         setSelectedHandId(id === selectedHandId ? null : id);
         setCrash(false);
         setDirect(false);
+        handEffect.play()
     };
 
     const handleBoardTileClick = (boardTile) => {
@@ -397,9 +403,11 @@ export default function MahjongDomino() {
                         )}
                     </div>
                 </div>
-                {boardTiles.length === 0 && (
-                    <Modal startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-                )}
+                {boardTiles.length === 0 && load && (
+                    <Modal score={score} combo={combo} startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+               )
+                }
+                {settingsOpen && ( <Settings /> )}
             </div>
         </>
     );

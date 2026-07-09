@@ -1,8 +1,10 @@
 import {useSpring, animated} from "@react-spring/web";
+import {useStore} from "./store.js";
+
 
 
 export default function TopMenu({score = 0, deck = 0, combo= 0}){
-
+    const currentLevel = useStore((state) => state.currentLevel);
     const [style]= useSpring(()=>({
         from: {transform: 'scale(1)',textShadow: '0 0 0 #faceaf, 0 0 0 #b86227',color: '#ffffff',config:{duration:100}},
         to: [
@@ -27,9 +29,12 @@ export default function TopMenu({score = 0, deck = 0, combo= 0}){
                 </animated.div>
             </div>
             <div className={"top-menu-step"}>
-                Уровень {deck}
+                Уровень {currentLevel}
             </div>
-            <div className={"settings-btn"}>
+            <div onPointerDown={()=>{
+                useStore.getState().setSettingsOpen(true)
+                useStore.getState().setPause(true)
+            }} className={"settings-btn"}>
                 <div className={"btn-hover"} />
                 <img src={"./img/settings.png"}/>
 

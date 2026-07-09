@@ -7,6 +7,118 @@ body{
   background: #0A0100;
 }
 
+.text-range{
+  margin-left: 30px;
+  text-align: left;
+}
+
+.content{
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 80%;
+  text-align: center;
+  background: #251C13;
+  border: solid #736856 1px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px #000000, inset 0 0 10px 5px rgba(93,227,20,0.25);
+}
+
+.total-score{
+  top: 20%;
+  font-size: 25pt;
+  padding: 20px 0 20px 0 ;
+}
+
+.sound{
+  top:42%;
+  padding: 0 0 20px 0 ;
+}
+
+.title-sound{
+  text-align: left;
+  padding-left: 20px;
+  font-size: 20pt;
+}
+
+.music{
+  display: flex;
+  width: 100%;
+  padding-bottom: 20px;
+}
+.music-content{
+  width: 80%;
+}
+.music svg{
+  fill: #bd8646;
+  width: 50px;
+  height: 50px;
+  margin-left: 20px;
+}
+
+.range{
+  margin: 10px 0 0 20px;
+  width: 100%;
+}
+
+input[type=range]{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #261407;
+  box-shadow:inset 0 -5px 10px 5px #4F371F;
+  border-radius: 25px;
+  width: 100%;
+}
+
+input[type=range]::-webkit-slider-runnable-track{
+  background: #261407;
+  box-shadow:inset 0 -5px 10px 5px #4F371F;
+  border-radius: 25px;
+}
+
+input[type="range"]::-moz-range-track {
+  background: #261407;
+  box-shadow:inset 0 -5px 10px 5px #4F371F;
+  border-radius: 25px;
+}
+
+input[type=range]::-moz-range-thumb{
+  background: #D4AD5F;
+  border-radius: 15px;
+  width: 50px;
+  cursor: pointer;
+}
+
+input[type=range]::-ms-thumb{
+  background: #D4AD5F;
+  border-radius: 15px;
+  width: 50px;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb{
+  background: #D4AD5F;
+  border-radius: 15px;
+  width: 50px;
+  cursor: pointer;
+}
+
+.settings-close{
+  cursor: pointer;
+}
+
+.settings-close{
+  position: absolute;
+  height: 60px;
+  width: 35%;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
 .load{
   position: fixed;
   top: 0;
@@ -124,7 +236,7 @@ body{
 }
 
 .text-family{
-  font-family: 'Segoe UI Symbol', serif;
+  font-family: "Huninn", sans-serif;
   white-space: nowrap;
   background: linear-gradient(180deg, #faceaf 0%, #b86227 100%);
   -webkit-background-clip: text;
@@ -139,7 +251,7 @@ body{
   top: 0;
   width: 170px;
   height: 53px;
-  font-family: 'Segoe UI Symbol', serif;
+  font-family: "Huninn", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 40px;
@@ -160,7 +272,7 @@ body{
   text-align: center;
   width: 100%;
   height: auto;
-  font-family: 'Segoe UI Symbol', serif;
+  font-family: "Huninn", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 40px;
@@ -187,7 +299,7 @@ body{
   margin: auto;
   width: auto;
   height: 55px;
-  font-family: 'Segoe UI Symbol', serif;
+  font-family: "Huninn", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 40px;
@@ -238,6 +350,7 @@ body{
 .hand-item-effect:hover{
   box-shadow: 0 0 4px 4px #d12613;
 }
+
 .stone-field .arrow{
   opacity: 0;
   transition: 1s;
@@ -379,7 +492,7 @@ body{
 
 }
 
-.modal, .modal-bg{
+.modal, .modal-bg, .settings{
   position: fixed;
   z-index: 1000;
   top: 0;
@@ -390,7 +503,7 @@ body{
 }
 .modal-bg{
   background: #0A0100 !important;
-  opacity: 0.3;
+  opacity: 0.9;
 }
 .modal-content{
   position: absolute;
@@ -416,7 +529,7 @@ body{
   top: 30px;
   margin: auto;
   text-align: center;
-  width: 200px;
+  width: auto;
   font-size: 40pt;
 }
 .modal-body{
@@ -429,8 +542,6 @@ body{
   width: 650px;
   height: 400px;
   font-size: 20pt;
-
-
 }
 .modal-footer{
   position: absolute;
@@ -467,6 +578,33 @@ body{
   margin: auto;
   color: #CCB9B1;
 }
+
+.settings-body{
+  position: absolute;
+  width: 900px;
+  height: 600px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 80000;
+}
+.settings-body h2{
+  top: 50px;
+}
+.settings-body img{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+
+}
+
 
 .field-top{
   position: absolute;
@@ -554,6 +692,10 @@ body{
     top: 100px;
     transform: scale(1);
   }
+  .settings-body{
+    transform: translate(-10%, 0) scale(60%);
+  }
+
   .hand-box{
 
 
@@ -580,6 +722,9 @@ body{
     height: 600px;
     transform: scale(0.8);
     left: 0;
+  }
+  .settings-body{
+    transform: translate(-29%, 0) scale(40%);
   }
   .hand-box{
     height: 90px;
@@ -716,6 +861,36 @@ body{
   .kombo{
     margin-top: 20px;
   }
-
+  .settings-body{
+    width: 800px;
+    height: 360px;
+  }
+  .settings-body h2{
+    top: 10%;
+    font-size: 2rem;
+  }
+  .total-score, .sound{
+    font-size: 1rem;
+  }
+  .total-score{
+    top:100px;
+  }
+  .sound{
+    top:190px;
+    display: flex;
+  }
+  .sound h3{
+    display: none;
+  }
+  .music{
+    margin-top: 10px;
+    padding-bottom: 5px;
+  }
+  .music svg{
+    margin-left: 10px;
+  }
+  .music-content{
+    width: 200px;
+  }
 }
 

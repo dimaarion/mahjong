@@ -1,9 +1,41 @@
+import Database from "./Database.js";
+import {useEffect, useMemo} from "react";
+import {useStore} from "./store.js";
+import { Howl } from 'howler';
+
+
+export function percent(n,n2){
+    return n * 100 / n2
+}
+
+export const useGameAudio = () => {
+    const sounds = useMemo(() => ({
+        // Фоновая музыка
+        bgMusic: new Howl({
+            src: ['./audio/Midnight_Garden_Chimes.mp3','public/audio/Midnight_Garden_Chimes.mp3'],
+            html5: false, // Используем Web Audio API (скрывает из трея)
+            loop: true,
+            volume: useStore.getState().music // начальная громкость из состояния,
+        })
+    }), []);
+
+    // Автоматическая остановка всех звуков при размонтировании
+    useEffect(() => {
+        return () => {
+            Object.values(sounds).forEach(s => s.unload());
+        };
+    }, [sounds]);
+
+    return sounds;
+};
+
 
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
+
 export const isTileOpen = (tile, allTiles) => {
      // Стандартные размеры кости в координатной сетке
      const TILE_WIDTH = 1.02;
@@ -326,84 +358,6 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
      };
  };
 
- const startGame_s = () => {
-     // 1. Получаем конфигурацию сложности для текущего уровня (лимит ширины 6 встроен внутри)
-     const config = getLevelDifficultyConfig(currentLevel);
+ export const db = new Database()
+ db.create()
 
-     // Генерируем 3D-пирамиду (максимум 6 костей в ширину)
-     let boardLayout = generateOrganicPyramid(config.baseSize, config.maxLayers, config.fillDensity);
-
-     // Гарантируем, что количество костей на поле четное (для парности)
-     if (boardLayout.length % 2 !== 0) {
-         boardLayout.pop();
-     }
-
-     // 2. Отбираем пул уникальных картинок/типов для этого уровня
-     const selectedTypes = shuffle(TILE_TYPES).slice(0, config.uniqueTypesCount);
-
-     // 3. СНАЧАЛА генерируем фиксированную руку из 8 костей
-     const initialHand = [];
-     let tileIdCounter = 0;
-
-     for (let i = 0; i < 8; i++) {
-         const randomType = selectedTypes[Math.floor(Math.random() * selectedTypes.length)];
-         initialHand.push({
-             id: `hand_${tileIdCounter++}`,
-             typeId: randomType.id
-         });
-     }
-
-     // 4. ЗАПОЛНЯЕМ ПОЛЕ ПАРАМИ на основе костей, которые СЕЙЧАС лежат в руке
-     // Это гарантирует, что у игрока со старта будет куча вариантов для ходов
-     const board = [];
-
-     for (let i = 0; i < boardLayout.length; i += 2) {
-         // Выбираем случайную кость из руки игрока, чтобы создать ей пару на поле
-         const targetHandTile = initialHand[Math.floor(Math.random() * initialHand.length)];
-
-         // Добавляем 2 одинаковые кости на поле
-         for (let j = 0; j < 2; j++) {
-             if (boardLayout[i + j]) {
-                 board.push({
-                     id: `board_${tileIdCounter++}`,
-                     typeId: targetHandTile.typeId,
-                     // Координаты из нашей 3D-пирамиды
-                     x: boardLayout[i + j].x,
-                     y: boardLayout[i + j].y,
-                     z: boardLayout[i + j].z
-                 });
-             }
-         }
-     }
-
-     // Перемешиваем только координаты на поле, чтобы пары не лежали вплотную друг к другу
-     const positions = board.map(t => ({ x: t.x, y: t.y, z: t.z }));
-     const shuffledPositions = shuffle(positions);
-
-     const finalBoard = board.map((tile, index) => ({
-         ...tile,
-         ...shuffledPositions[index]
-     }));
-
-     // Сортируем поле снизу вверх, чтобы React правильно накладывал слои (Z-Index)
-     finalBoard.sort((a, b) => a.z - b.z || a.y - b.y || a.x - b.x);
-
-     // 5. Обновляем стейты игры по твоей новой механике
-     setBoardTiles(finalBoard);
-     setHand(initialHand);
-
-     // Переменные колоды (deck) больше не нужны, так как добора нет
-     if (typeof setDeck === 'function') setDeck([]);
-
-     setSelectedHandId(null);
-     setScore(0);
-     setCombo(1); // Начинаем с комбо 1 или 0
-     setLastMatchTime(Date.now());
-
-     // Настройка бонусов управления (сдвиги и молотки) на основе уровня
-     setShiftsLeft(config.shiftsLimit);  // Твой бывший countDirect, теперь с лимитом от сложности
-     setHammersLeft(config.hammersLimit); // Количество активаций молотка на уровень
-
-     // Если ты хочешь оставить свое имя переменной для сдвигов:
-     // setCountDirect(config.shiftsLimit);
- };

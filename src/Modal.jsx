@@ -1,8 +1,13 @@
+import Database from "./Database.js";
+import {useStore} from "./store.js";
+
+import {db} from "./action.js";
 export default function Modal({
-                                  currentLevel,
-                                  setCurrentLevel,
-                                  startGame
+                                  startGame,
+                                  score = 0,
+                                  combo
                               }) {
+    const currentLevel = useStore((state) => state.currentLevel);
     return (
         <div className={"modal"}>
            <div className={"modal-bg"}/>
@@ -12,25 +17,26 @@ export default function Modal({
                 </div>
                 <div className={"modal-body"}>
                     <div className={"text-family modal-body-text"}>
-                        Общий счет: 100
+                        Общий счет: {db.getAll().score + score}
                     </div>
                     <div className={"text-family modal-body-text"}>
-                        Счет за уровень: 100
+                        Счет за уровень: {score}
                     </div>
                     <div className={"text-family modal-body-text"}>
-                        Комбо: 100
+                        Комбо: x{combo}
                     </div>
                     <div className={"modal-footer"}>
                         <div onPointerDown={()=>{
-                            setCurrentLevel(currentLevel)
+                            useStore.getState().setCurrentLevel(currentLevel)
                             startGame()
                         }} className={"modal-btn"}>
                             <img src={"./img/btn-bg.png"} />
                             <div className={"modal-btn-text"}>Заново</div>
                         </div>
                         <div onPointerDown={()=>{
-                            setCurrentLevel(currentLevel + 1)
+                          useStore.getState().setCurrentLevel(currentLevel + 1)
                             startGame()
+                            db.setScore(score)
                         }} className={"modal-btn"}>
                             <img src={"./img/btn-bg.png"} />
                             <div className={"modal-btn-text"}>Продолжить</div>
