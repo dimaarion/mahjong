@@ -1,6 +1,7 @@
 * {
   user-select: none; /* Запрещает выделение текста */
   -webkit-user-drag: none; /* Отключает перетаскивание изображений */
+  cursor:url("./assets/cursor.png"), pointer;
 }
 
 body{
@@ -88,25 +89,23 @@ input[type=range]::-moz-range-thumb{
   background: #D4AD5F;
   border-radius: 15px;
   width: 50px;
-  cursor: pointer;
 }
 
 input[type=range]::-ms-thumb{
   background: #D4AD5F;
   border-radius: 15px;
   width: 50px;
-  cursor: pointer;
 }
 
 input[type=range]::-webkit-slider-thumb{
   background: #D4AD5F;
   border-radius: 15px;
   width: 50px;
-  cursor: pointer;
+
 }
 
 .settings-close{
-  cursor: pointer;
+
 }
 
 .settings-close{
@@ -133,23 +132,27 @@ input[type=range]::-webkit-slider-thumb{
 
 .load-rotate{
   position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  margin: auto;
+  top: 50%;
+  left: 50%;
   width: 256px;
   height: 256px;
   z-index: 2;
 }
 
+.load-rotate img{
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  right: 123px;
+  bottom: 180px;
+}
+
 .load-resize{
   position: absolute;
-  top: 450px;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  margin: auto;
+  top: 65%;
+  right: auto;
+  left: 50%;
+  bottom: auto;
   width: 800px;
   height: 90px;
   z-index: 3;
@@ -158,9 +161,9 @@ input[type=range]::-webkit-slider-thumb{
 .load-resize-item{
   position: absolute;
   top: 0;
-  left: 0;
+  left: auto;
   bottom: 0;
-  right: 0;
+  right: 400px;
   margin: auto;
   width: 100%;
   height: 100%;
@@ -168,7 +171,7 @@ input[type=range]::-webkit-slider-thumb{
 .load-resize-item-2{
   position: absolute;
   top: 2px;
-  left: -70px;
+  right: 470px;
   bottom: 0;
   margin: auto;
   width: 800px;
@@ -187,8 +190,6 @@ input[type=range]::-webkit-slider-thumb{
   left: 0;
   right: 0;
   bottom: 0;
-
-
 }
 .main-bg{
   position: fixed;
@@ -214,7 +215,7 @@ input[type=range]::-webkit-slider-thumb{
   bottom: -100px;
   width: 80px;
   height: 80px;
-  cursor: pointer;
+
 }
 .settings-btn img{
   width: 100%;
@@ -249,7 +250,7 @@ input[type=range]::-webkit-slider-thumb{
   position: absolute;
   left: 10px;
   top: 0;
-  width: 170px;
+  width: auto;
   height: 53px;
   font-family: "Huninn", sans-serif;
   font-style: normal;
@@ -314,32 +315,36 @@ input[type=range]::-webkit-slider-thumb{
 
 .playing-field{
   position: absolute;
-  left: -20px;
-  right: 0;
-  top:400px;
+  left: 50%;
+  top:50%;
   width: 500px;
   height: 500px;
-  margin: auto;
-  transform: scale(2);
+  transform: scale(1.5);
+
 }
+
+.playing-field-item{
+  position: absolute;
+  right: 600px;
+  bottom: 650px;
+}
+
 
 .hand{
   position: absolute;
-  left: auto;
-  right: -120px;
-  top: -60px;
-  bottom: 50px;
-  display: flex;
-  gap: 10px;
-  margin: auto;
-
+  left: 370px;
 }
 .hand-item{
   position: relative;
   margin: 5px;
-
-
 }
+
+.hand-btn{
+  position: relative;
+  top: 180px;
+}
+
+
 .hand-item-effect{
   position: absolute;
   top: 0;
@@ -352,8 +357,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .stone-field .arrow{
-  opacity: 0;
-  transition: 1s;
+
 
 }
 .arrow {
@@ -368,8 +372,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .stone-field:hover .arrow{
-  opacity: 1;
-  transition: .5s;
+
 
 }
 
@@ -381,8 +384,6 @@ input[type=range]::-webkit-slider-thumb{
 .handTile{
   width: 62px;
   height: 85px;
-  cursor:pointer;
-
 }
 
 
@@ -471,15 +472,16 @@ input[type=range]::-webkit-slider-thumb{
 
 .btn-counter{
   position: absolute;
-  top: -11px;
-  right: -11px;
-  width: 20px;
-  height: 20px;
+  top: -18px;
+  right: -18px;
+  width: 30px;
+  height: 30px;
   margin: auto;
-  color: #d12613;
+  color: #ffffff;
   background: #1c1b1b;
   text-align: center;
   border-radius:15px ;
+  font-size: 19pt;
 
 }
 
@@ -487,7 +489,6 @@ input[type=range]::-webkit-slider-thumb{
   width: 100%;
   height: 100%;
   position: relative;
-  cursor: pointer;
   z-index: 1;
 
 }
@@ -507,15 +508,20 @@ input[type=range]::-webkit-slider-thumb{
 }
 .modal-content{
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
+  top: 50%;
+  left: 50%;
   width: 800px;
   height: 500px;
   z-index: 1010;
 }
+.modal-content-item{
+  position: absolute;
+  width: 800px;
+  height: 500px;
+  right: 400px;
+  bottom: 250px;
+}
+
 .modal-content img{
   width: 100%;
   height: 100%;
@@ -562,7 +568,6 @@ input[type=range]::-webkit-slider-thumb{
   width: 50%;
   height: 100%;
   display: flex;
-  cursor: pointer;
 
 }
 
@@ -583,13 +588,18 @@ input[type=range]::-webkit-slider-thumb{
   position: absolute;
   width: 900px;
   height: 600px;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
+  top: 50%;
+  left: 50%;
   z-index: 80000;
 }
+.settings-body-item{
+  position: absolute;
+  width: 900px;
+  height: 600px;
+  right: 450px;
+  bottom: 300px;
+}
+
 .settings-body h2{
   top: 50px;
 }
@@ -655,6 +665,7 @@ input[type=range]::-webkit-slider-thumb{
   .main-bg{
       width: 100%;
   }
+
 }
 
 @media (orientation: portrait) {
@@ -663,49 +674,26 @@ input[type=range]::-webkit-slider-thumb{
   }
 }
 
-@media (max-height: 1120px) {
+
+@media (max-width: 1250px) {
+
   .playing-field{
-    top: 200px;
-    transform: scale(1.4);
+    transform: scale(1);
   }
-}
-
-
-@media (max-width: 1940px) {
-
-  .hand-box{
-    height: 165px;
-  }
-  .hand{
-    right: -120px;
-  }
-  .btn-hand{
-    left: 30px;
-  }
-  .restart{
-
+  .playing-field-item{
+    right: 700px;
+    bottom: 750px;
   }
 }
 
 @media (max-width: 1500px) {
-  .playing-field{
-    top: 100px;
-    transform: scale(1);
-  }
   .settings-body{
-    transform: translate(-10%, 0) scale(60%);
+    transform: scale(0.6);
   }
-
-  .hand-box{
-
-
-  }
-
-  .btn-hand{
-    left: 30px;
-  }
-  .restart{
-
+  .settings-body-item{
+    position: absolute;
+    right: 760px;
+    bottom: 600px;
   }
   .top-menu-title, .top-menu-score, .top-menu-step{
     top: 5px;
@@ -715,16 +703,34 @@ input[type=range]::-webkit-slider-thumb{
     line-height: 30px;
   }
 
+  .load-resize{
+    transform: scale(0.5);
+
+  }
+  .load-resize-item{
+    right: 800px;
+  }
+  .load-resize-item-2{
+    right: 870px;
+  }
+
+
+
 }
 
-@media (max-width: 560px) {
+@media (max-width: 820px) and (orientation: portrait) {
   .playing-field{
-    height: 600px;
     transform: scale(0.8);
-    left: 0;
+  }
+  .playing-field-item{
+    right: 750px;
+    bottom: 800px;
   }
   .settings-body{
-    transform: translate(-29%, 0) scale(40%);
+    transform:  scale(0.4);
+  }
+  .settings-body-item{
+    right: 1130px;
   }
   .hand-box{
     height: 90px;
@@ -732,19 +738,16 @@ input[type=range]::-webkit-slider-thumb{
     grid-template-areas: "a a a a a a a a";
   }
   .hand{
-    right: auto;
-    top: auto;
-    bottom: -10px;
-    left: -70px;
+    left: -60px;
+    top: 540px;
+    transform: scale(1.3);
   }
-  .btn-hand{
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    right: 0;
-    left: auto;
-    bottom: -25px;
+  .hand-btn{
+    position: relative;
+    left: 0;
+    top:-20px;
   }
+
 
   .restart, .crash, .direct{
     top: auto;
@@ -752,41 +755,30 @@ input[type=range]::-webkit-slider-thumb{
   }
 
   .restart{
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    right: 60px;
-    left: auto;
+
+    right: 100px;
+
   }
 
   .direct{
-    right: 400px;
+    right: 350px;
   }
 
   .crash{
-    right: 230px;
+    right: 0;
+    left: 0;
+    margin: auto;
   }
 
 
   .modal-content{
-    width: 100%;
-    height: 520px;
+    transform: scale(0.5);
   }
-  .modal-body-text{
-    margin-left: 40px;
+  .modal-content-item{
+    right: 800px;
+    bottom: 500px;
   }
-  .modal-footer{
-    text-align: center;
-    position: fixed;
-    flex-wrap: wrap;
-    width: min-content;
-    top: 260px;
 
-  }
-.modal-btn{
- width: 200px;
-
-}
   .top-menu-score{
     left: auto;
     right: 14px;
@@ -806,7 +798,6 @@ input[type=range]::-webkit-slider-thumb{
     bottom: -75px;
     width: 60px;
     height: 60px;
-    cursor: pointer;
   }
 
 
@@ -814,14 +805,21 @@ input[type=range]::-webkit-slider-thumb{
 
 @media (max-width: 360px) {
   .playing-field{
-    left: -10px;
+
   }
 }
 
-@media (max-height: 740px) {
+@media (max-width: 460px) {
+
+}
+
+@media (max-height: 840px) and (orientation: landscape) {
   .playing-field{
-    top: -10px;
-    transform: scale(0.6);
+    transform: scale(1);
+  }
+  .playing-field-item{
+    right: 700px;
+    bottom: 700px;
   }
   .top-menu{
     height: 30px;
@@ -844,53 +842,54 @@ input[type=range]::-webkit-slider-thumb{
     line-height: 20px;
   }
   .modal-content{
-    width: 600px;
-    height: 300px;
+    transform: scale(0.5);
   }
-  .modal-body{
-    width: 500px;
-    height: 270px;
+  .modal-content-item{
+    right: 800px;
+    bottom: 500px;
   }
-  .modal-body-text{
-    margin-top: 0;
-  }
-  .modal-footer{
-    height: 50px;
-    width: 500px;
-  }
+
+
   .kombo{
     margin-top: 20px;
   }
-  .settings-body{
-    width: 800px;
-    height: 360px;
+
+  .settings-body {
+    transform: scale(0.4);
   }
-  .settings-body h2{
-    top: 10%;
-    font-size: 2rem;
+  .settings-body-item {
+    right: 1120px;
+    bottom: 750px;
   }
-  .total-score, .sound{
-    font-size: 1rem;
+
+}
+
+@media (max-height: 640px) and (orientation: landscape) {
+  .playing-field{
+    transform: scale(0.9);
   }
-  .total-score{
-    top:100px;
-  }
-  .sound{
-    top:190px;
-    display: flex;
-  }
-  .sound h3{
-    display: none;
-  }
-  .music{
-    margin-top: 10px;
-    padding-bottom: 5px;
-  }
-  .music svg{
-    margin-left: 10px;
-  }
-  .music-content{
-    width: 200px;
+  .playing-field-item{
+    right: 800px;
+    bottom: 750px;
   }
 }
 
+@media (max-height: 540px) and (orientation: landscape) {
+  .playing-field{
+    transform: scale(0.5);
+  }
+  .playing-field-item{
+    right: 1000px;
+    bottom: 920px;
+  }
+}
+
+@media (max-height: 780px) and (orientation: portrait) {
+  .playing-field{
+    transform: scale(0.7);
+  }
+  .playing-field-item{
+    right: 800px;
+    bottom: 890px;
+  }
+}

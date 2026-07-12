@@ -36,7 +36,7 @@ import TopMenu from "../TopMenu.jsx";
 import Modal from "../Modal.jsx";
 import {
     generateOrganicPyramid, getLevelDifficultyConfig, getTileNeighbors,
-    isTileOpen, useGameAudio
+    isTileOpen, useGameEffectAudio, ysdk
 } from "../action.js";
 import {useSpring,animated} from "@react-spring/web";
 import {useStore} from "../store.js";
@@ -125,6 +125,7 @@ export default function MahjongDomino() {
     const settingsOpen = useStore((state) => state.settingsOpen);
     const currentLevel = useStore((state) => state.currentLevel);
     const setCurrentLevel = useStore((state) => state.setCurrentLevel);
+    const pause = useStore((state) => state.pause);
 
     const [hand, setHand] = useState([]);
     const [selectedHandId, setSelectedHandId] = useState(null);
@@ -137,19 +138,50 @@ export default function MahjongDomino() {
     const [countDirect, setCountDirect] = useState(3);
     const [countCrash, setCountCrash] = useState(1);
     const stepLength = 1;
+    const effect = useStore((state) => state.effect);
+    const setPause = useStore((state) => state.setPause);
 
     // Рефы для контроля асинхронных операций
     const globalTileIdCounter = useRef(0);
     const activeTimeouts = useRef([]);
-    const { handEffect } = useGameAudio();
 
+    const handEffect = useGameEffectAudio("./audio/knocking-with-a-stick-on-wood.mp3",effect);
+    const boardMoveEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",effect);
+    const boardCrashEffect = useGameEffectAudio("./audio/rock-throw-with-destruction.mp3",effect);
+    const noBoardEffect = useGameEffectAudio("./audio/chpok--shampanskoe.mp3",effect);
+    const btnEffect = useGameEffectAudio("./audio/choice-error-sound.mp3",effect);
+    const restartEffect = useGameEffectAudio("./audio/roll-of-dice.mp3",effect);
 
     // Очистка таймаутов при размонтировании компонента
+
+    useEffect(() => {
+        handEffect.volume(effect)
+        boardMoveEffect.volume(effect)
+        boardCrashEffect.volume(effect)
+        noBoardEffect.volume(effect)
+        btnEffect.volume(effect)
+        restartEffect.volume(effect)
+    }, [effect, handEffect,boardMoveEffect,boardCrashEffect,noBoardEffect,btnEffect,restartEffect]);
+
+
     useEffect(() => {
         return () => {
             activeTimeouts.current.forEach(clearTimeout);
         };
     }, []);
+
+    useEffect(() => {
+        ysdk.ready()
+        ysdk.start()
+    }, []);
+
+    useEffect(() => {
+        if(boardTiles.length === 0){
+
+            ysdk.stop()
+        }
+
+    }, [boardTiles,setPause]);
 
     useEffect(() => {
         startGame();
@@ -163,6 +195,7 @@ export default function MahjongDomino() {
     });
 
     const startGame = () => {
+        ysdk.start()
         // Очищаем все незавершенные таймауты анимаций прошлой игры
         activeTimeouts.current.forEach(clearTimeout);
         activeTimeouts.current = [];
@@ -198,6 +231,7 @@ export default function MahjongDomino() {
         setCountCrash(config.hammersLimit);
         setCrash(false);
         setDirect(false);
+        restartEffect.play()
     };
 
     const handleHandTileClick = (id) => {
@@ -212,6 +246,7 @@ export default function MahjongDomino() {
         if (crash && countCrash > 0) {
             setHandId(boardTile.id);
             setCountCrash(prev => prev - 1);
+            boardCrashEffect.play()
 
             const timeOut = setTimeout(() => {
                 const currentTiles = useStore.getState().boardTiles;
@@ -225,7 +260,9 @@ export default function MahjongDomino() {
             activeTimeouts.current.push(timeOut);
             return;
         }
-
+        if(!isTileOpen(boardTile, boardTiles)){
+            noBoardEffect.play()
+        }
         // === ЛОГИКА ОБЫЧНОГО КЛИКА (МАТЧ С РУКОЙ) ===
         if (!isTileOpen(boardTile, boardTiles) || selectedHandId === null) return;
 
@@ -233,6 +270,7 @@ export default function MahjongDomino() {
         if (!handTile) return;
 
         if (handTile.typeId === boardTile.typeId) {
+            handEffect.play()
             const currentTime = Date.now();
             const timePassed = (currentTime - lastMatchTime) / 1000;
 
@@ -261,21 +299,24 @@ export default function MahjongDomino() {
         } else {
             setSelectedHandId(null);
             setCombo(1);
+            noBoardEffect.play()
         }
     };
 
     const crashClick = () => {
         setSelectedHandId(null);
         setCombo(1);
-        setCrash(true);
+        setCrash(!crash);
         setDirect(false);
+        btnEffect.play()
     };
 
     const directClick = () => {
-        setDirect(true);
+        setDirect(!direct);
         setCrash(false);
         setSelectedHandId(null);
         setCombo(1);
+        btnEffect.play()
     };
 
     return (
@@ -286,6 +327,7 @@ export default function MahjongDomino() {
             <div className={"main"}>
                 <TopMenu score={score} deck={currentLevel} combo={combo} />
                 <div className={"playing-field"}>
+                    <div className={"playing-field-item"}>
                     {boardTiles.map(tile => {
                         const isOpen = isTileOpen(tile, boardTiles);
                         const canBeTarget = isOpen && selectedHandId !== null;
@@ -321,6 +363,7 @@ export default function MahjongDomino() {
                                             setCountDirect(prev => prev - 1);
                                             const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
                                             useStore.getState().setBoardTiles(d);
+                                            boardMoveEffect.play()
                                         }
                                     }} className={"field-top"}>
                                          <img className={"arrow"} style={{ transform: 'rotate(-90deg)' }} src={"./img/arrow.png"} alt="up" />
@@ -332,6 +375,7 @@ export default function MahjongDomino() {
                                             setCountDirect(prev => prev - 1);
                                             const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
                                             useStore.getState().setBoardTiles(d);
+                                            boardMoveEffect.play()
                                         }
                                     }} className={"field-left"}>
                                          <img className={"arrow"} style={{ transform: 'rotate(-180deg)' }} src={"./img/arrow.png"} alt="left" />
@@ -343,6 +387,7 @@ export default function MahjongDomino() {
                                             setCountDirect(prev => prev - 1);
                                             const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
                                             useStore.getState().setBoardTiles(d);
+                                            boardMoveEffect.play()
                                         }
                                     }} className={"field-right"}>
                                          <img className={"arrow"} style={{ transform: 'rotate(0deg)' }} src={"./img/arrow.png"} alt="right" />
@@ -354,6 +399,7 @@ export default function MahjongDomino() {
                                             setCountDirect(prev => prev - 1);
                                             const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
                                             useStore.getState().setBoardTiles(d);
+                                            boardMoveEffect.play()
                                         }
                                     }} className={"field-bottom"}>
                                         <img className={"arrow"} style={{ transform: 'rotate(90deg)' }} src={"./img/arrow.png"} alt="down" />
@@ -381,13 +427,13 @@ export default function MahjongDomino() {
                         )}
 
                         {boardTiles.length !== 0 && (
-                            <div>
+                            <div className={"hand-btn"}>
                                 <div className={"direct"} onClick={directClick}>
-                                    <img src={"./img/direct.png"} title={"Переместить камень"} alt="direct" />
+                                    <img src={"./img/direct.png"}  alt="direct" />
                                     <div style={direct ? { opacity: 1 } : {}} className={"btn-hover"} />
                                     <div className={"btn-counter"}>{countDirect}</div>
                                 </div>
-                                <div className={"crash"} onClick={crashClick} title={"Разбить камень"}>
+                                <div className={"crash"} onClick={crashClick} >
                                     <img src={"./img/crash.png"} alt="crash" />
                                     <div style={crash ? { opacity: 1 } : {}} className={"btn-hover"} />
                                     <div className={"btn-counter"}>{countCrash}</div>
@@ -395,7 +441,7 @@ export default function MahjongDomino() {
                                 <div className={"restart"} onClick={(e) => {
                                     e.stopPropagation();
                                     startGame();
-                                }} title={"Перезапустить уровень"}>
+                                }} >
                                     <div className={"btn-hover"} />
                                     <img src={"./img/restart.png"} alt="restart" />
                                 </div>
@@ -403,12 +449,13 @@ export default function MahjongDomino() {
                         )}
                     </div>
                 </div>
-                {boardTiles.length === 0 && load && (
-                    <Modal score={score} combo={combo} startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-               )
-                }
-                {settingsOpen && ( <Settings /> )}
+                </div>
             </div>
+            {boardTiles.length === 0 && load && (
+                <Modal score={score} combo={combo} startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+            )
+            }
+            {settingsOpen && ( <Settings /> )}
         </>
     );
 }
@@ -476,7 +523,6 @@ const styles = {
         borderRadius: '15px',
         color: '#fff',
         fontWeight: 'bold',
-        cursor: 'pointer',
         fontSize: '12px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
     },
@@ -513,14 +559,12 @@ const styles = {
     },
     tileOpen: {
         opacity: 1,
-        cursor: 'pointer',
         filter: 'brightness(1)'
 
     },
     tileLocked: {
         opacity: 1,
         filter: 'brightness(0.95)',
-        cursor: 'pointer'
     },
     tileHighlight: {
         /*boxShadow: '0 0 20px #39ff14, inset 0 0 10px rgba(57,255,20,0.6)',*/
@@ -607,7 +651,6 @@ const styles = {
     handTile: {
         width: '62px',
         height: '85px',
-        cursor:"pointer",
         float:"right"
 
 

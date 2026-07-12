@@ -25,15 +25,15 @@ export default function Load(){
 
     return <div className={"load"}>
         <img src={"./img/load-bg.png"} className={"load-img"} />
-        <animated.div style={rotate} className={"load-rotate"}>
-            <img width={"100%"} height={"100%"} src={"./img/load-rotate.png"} />
-        </animated.div>
+        <div  className={"load-rotate"}>
+            <animated.img style={rotate}  src={"./img/load-rotate.png"} />
+        </div>
         <div className={"load-resize"}>
             <div className={"load-resize-item"}>
                 <img width={"100%"} height={"100%"} src={"./img/load-resize.png"} />
             </div>
             <div className={"load-resize-item-2"}>
-                <svg width="800" height="100%" viewBox="0 0 800 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="100%" height="100%" viewBox="0 0 800 69" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                     <linearGradient id="gradient_1" gradientUnits="userSpaceOnUse" x1="298" y1="0" x2="298" y2="69">
                         <stop offset="0" stopColor="#FFFFFF" />

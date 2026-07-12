@@ -1,10 +1,13 @@
 import {useSpring, animated} from "@react-spring/web";
 import {useStore} from "./store.js";
+import {useGameEffectAudio, ysdk} from "./action.js";
 
 
 
 export default function TopMenu({score = 0, deck = 0, combo= 0}){
     const currentLevel = useStore((state) => state.currentLevel);
+    const effect = useStore((state) => state.effect);
+    const sharpEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",effect);
     const [style]= useSpring(()=>({
         from: {transform: 'scale(1)',textShadow: '0 0 0 #faceaf, 0 0 0 #b86227',color: '#ffffff',config:{duration:100}},
         to: [
@@ -13,6 +16,7 @@ export default function TopMenu({score = 0, deck = 0, combo= 0}){
         ],
 
     }),[combo])
+
 
 
 
@@ -34,6 +38,8 @@ export default function TopMenu({score = 0, deck = 0, combo= 0}){
             <div onPointerDown={()=>{
                 useStore.getState().setSettingsOpen(true)
                 useStore.getState().setPause(true)
+                ysdk.stop()
+                sharpEffect.play()
             }} className={"settings-btn"}>
                 <div className={"btn-hover"} />
                 <img src={"./img/settings.png"}/>

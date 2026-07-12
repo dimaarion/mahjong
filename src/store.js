@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import {db} from "./action.js";
+
 export const useStore = create((set) => ({
-    boardTiles: [],
+    boardTiles: [{}],
     load:false,
     settingsOpen: false,
     pause:false,

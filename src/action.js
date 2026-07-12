@@ -2,6 +2,7 @@ import Database from "./Database.js";
 import {useEffect, useMemo} from "react";
 import {useStore} from "./store.js";
 import { Howl } from 'howler';
+import Ysdk from "./Ysdk.js";
 
 
 export function percent(n,n2){
@@ -12,7 +13,7 @@ export const useGameAudio = () => {
     const sounds = useMemo(() => ({
         // Фоновая музыка
         bgMusic: new Howl({
-            src: ['./audio/Midnight_Garden_Chimes.mp3','public/audio/Midnight_Garden_Chimes.mp3'],
+            src: ['./audio/fon.mp3'],
             html5: false, // Используем Web Audio API (скрывает из трея)
             loop: true,
             volume: useStore.getState().music // начальная громкость из состояния,
@@ -22,9 +23,25 @@ export const useGameAudio = () => {
     // Автоматическая остановка всех звуков при размонтировании
     useEffect(() => {
         return () => {
-            Object.values(sounds).forEach(s => s.unload());
+            Object.values(sounds).forEach(s => s?.unload());
         };
     }, [sounds]);
+
+    return sounds;
+};
+
+export const useGameEffectAudio = (name = "", volume = 0.5) => {
+    const sounds = useMemo(() => {
+       return  new Howl({
+            src: [name],
+            html5: false, // Используем Web Audio API (скрывает из трея)
+            loop: false,
+            volume: volume // начальная громкость из состояния,
+        })
+    }, [name,volume]);
+
+    // Автоматическая остановка всех звуков при размонтировании
+
 
     return sounds;
 };
@@ -359,5 +376,10 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
  };
 
  export const db = new Database()
+ export const ysdk = new Ysdk()
+//db.remove()
  db.create()
+ysdk.lang()
+ysdk.getData()
+
 
