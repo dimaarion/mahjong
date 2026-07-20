@@ -36,11 +36,14 @@ import TopMenu from "../TopMenu.jsx";
 import Modal from "../Modal.jsx";
 import {
     generateOrganicPyramid, getLevelDifficultyConfig, getTileNeighbors,
-    isTileOpen, useGameEffectAudio, ysdk
+    isTileOpen, splitArray, useGameEffectAudio
 } from "../action.js";
 import {useSpring,animated} from "@react-spring/web";
 import {useStore} from "../store.js";
 import Settings from "../Settings.jsx";
+import {Ysdk} from "../Ysdk.js";
+import {Arrow, Hammer, HammerBtn, MahjongBonusIcon, RestartBtn, SettingsBtn} from "../Objects.jsx";
+
 
 const TILE_TYPES = [
     { id: 'dzy', color: '#2ecc71', label: 'dzy'},
@@ -125,8 +128,7 @@ export default function MahjongDomino() {
     const settingsOpen = useStore((state) => state.settingsOpen);
     const currentLevel = useStore((state) => state.currentLevel);
     const setCurrentLevel = useStore((state) => state.setCurrentLevel);
-    const pause = useStore((state) => state.pause);
-
+    const ysdkInit = useStore((state) => state.ysdkInstance);
     const [hand, setHand] = useState([]);
     const [selectedHandId, setSelectedHandId] = useState(null);
     const [score, setScore] = useState(0);
@@ -140,10 +142,15 @@ export default function MahjongDomino() {
     const stepLength = 1;
     const effect = useStore((state) => state.effect);
     const setPause = useStore((state) => state.setPause);
-
+    const start = useStore((state) => state.start);
+    const setStart = useStore((state) => state.setStart);
     // Рефы для контроля асинхронных операций
     const globalTileIdCounter = useRef(0);
     const activeTimeouts = useRef([]);
+
+    const [size, setSize] = useState({width: window.innerWidth, height: window.innerHeight});
+    const rt = 1000;
+    const [ratio, setRatio] = useState((window.innerWidth + window.innerHeight) / rt);
 
     const handEffect = useGameEffectAudio("./audio/knocking-with-a-stick-on-wood.mp3",effect);
     const boardMoveEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",effect);
@@ -151,6 +158,16 @@ export default function MahjongDomino() {
     const noBoardEffect = useGameEffectAudio("./audio/chpok--shampanskoe.mp3",effect);
     const btnEffect = useGameEffectAudio("./audio/choice-error-sound.mp3",effect);
     const restartEffect = useGameEffectAudio("./audio/roll-of-dice.mp3",effect);
+    const sharpEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",effect)
+
+
+    useEffect(() => {
+        window.addEventListener('resize', ()=>{
+            setSize({width: window.innerWidth, height: window.innerHeight});
+            setRatio((window.innerWidth + window.innerHeight) / rt);
+
+        });
+    }, []);
 
     // Очистка таймаутов при размонтировании компонента
 
@@ -170,22 +187,20 @@ export default function MahjongDomino() {
         };
     }, []);
 
-    useEffect(() => {
-        ysdk.ready()
-        ysdk.start()
-    }, []);
+
 
     useEffect(() => {
         if(boardTiles.length === 0){
-
-            ysdk.stop()
+            if(ysdkInit){
+                ysdkInit.features.GameplayAPI?.stop()
+            }
         }
 
-    }, [boardTiles,setPause]);
+    }, [boardTiles, setPause, ysdkInit]);
 
     useEffect(() => {
-        startGame();
-    }, [currentLevel]);
+       // startGame();
+    }, []);
 
     const crashAnimate = useSpring({
         from: { transform: 'rotate(0deg) translate(-10px, -10px)' },
@@ -195,7 +210,9 @@ export default function MahjongDomino() {
     });
 
     const startGame = () => {
-        ysdk.start()
+        if(ysdkInit){
+            ysdkInit.features.GameplayAPI?.start()
+        }
         // Очищаем все незавершенные таймауты анимаций прошлой игры
         activeTimeouts.current.forEach(clearTimeout);
         activeTimeouts.current = [];
@@ -243,10 +260,11 @@ export default function MahjongDomino() {
 
     const handleBoardTileClick = (boardTile) => {
         // === ЛОГИКА МОЛОТКА (CRASH) ===
-        if (crash && countCrash > 0) {
+        if (crash && isTileOpen(boardTile, boardTiles) && selectedHandId === null && countCrash > 0) {
             setHandId(boardTile.id);
             setCountCrash(prev => prev - 1);
             boardCrashEffect.play()
+            setCrash(false)
 
             const timeOut = setTimeout(() => {
                 const currentTiles = useStore.getState().boardTiles;
@@ -319,6 +337,243 @@ export default function MahjongDomino() {
         btnEffect.play()
     };
 
+    const [styleCombo] = useSpring(()=>({
+        from: {transform: 'scale(1)',textShadow: '0 0 0 #faceaf, 0 0 0 #b86227',color: '#ffffff',config:{duration:100}},
+        to: [
+            {transform: 'scale(1.3)',textShadow: '0 0 20px #ff3300, 0 0 40px #ff6600, 0 0 60px #ffcc00',color: '#ffffff',config:{duration:500}},
+            {transform: 'scale(1)',textShadow: '0 0 0 #faceaf, 0 0 0 #b86227,0 0 0 #ffcc00',color: '#ffffff',config:{duration:500}}
+        ],
+
+    }),[combo])
+
+    const r = true
+
+if(!start){
+    return <svg width={"100%"} height={"100%"} style={styles.start} preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <g>
+                <image
+                    href="./img/start-bg.png"
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="xMidYMid slice"
+
+                />
+        </g>
+        <g onPointerDown={()=> {
+            startGame()
+            setStart(true)
+            useStore.getState().setPause(false)
+        }}>
+            <image x={"50%"} y={"50%"} width={300} transform={`translate(-150 -60)`} href="./img/start-game.png" />
+        </g>
+
+    </svg>
+}else {
+    switch (r) {
+        case true:
+           return <>
+               <svg  xmlns="http://www.w3.org/2000/svg" style={styles.main} width={size.width} height={size.height} viewBox={`${0} ${0} ${size.width / ratio} ${size.height / ratio}`}>
+                   <defs>
+                       <linearGradient id="gradient_title" gradientUnits="userSpaceOnUse" x1="65" y1="0" x2="65" y2="34">
+                           <stop offset="0" stopColor="#FACEAF" />
+                           <stop offset="1" stopColor="#B86227" />
+                       </linearGradient>
+                       <filter colorInterpolationFilters="sRGB" x="-128" y="-32" width="130" height="34" id="filter_title_2">
+                           <feFlood floodOpacity="0" result="BackgroundImageFix_1" />
+                           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" />
+                           <feOffset dx="0" dy="4" />
+                           <feGaussianBlur stdDeviation="2" />
+                           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
+                           <feBlend mode="normal" in2="BackgroundImageFix_1" result="Shadow_title_2" />
+                           <feBlend mode="normal" in="SourceGraphic" in2="Shadow_title_2" result="Shape_title_3" />
+                       </filter>
+                       <linearGradient id={"card-gradient-1"} x1="0%" y1="0%" x2="100%" y2="100%">
+                           <stop offset="0%" stopColor="#fffff0" />
+                           <stop offset="100%" stopColor="#eaddbd" />
+                       </linearGradient>
+                           <filter colorInterpolationFilters="sRGB" x="-275.703" y="-59" width="277.703" height="61" id="filter_settings_1">
+                               <feFlood floodOpacity="0" result="BackgroundImageFix_settings_1" />
+
+                               <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_settings_3" />
+                               <feMorphology radius="1" operator="erode" in="SourceAlpha" />
+                               <feOffset dx="0" dy="0" />
+                               <feGaussianBlur stdDeviation="5" />
+                               <feComposite operator="arithmetic" k2="-1" k3="1" in2="HardAlpha_settings_3" />
+                               <feColorMatrix type="matrix" values="0 0 0 0 0.227 0 0 0 0 0.78 0 0 0 0 0.141 0 0 0 1 0" />
+                               <feBlend mode="normal"  result="InnerShadow" />
+                           </filter>
+                       </defs>
+
+
+                   <g>
+                       <image
+                           href="./img/bg-game.png"
+                           width="100%"
+                           height="100%"
+                           preserveAspectRatio="xMidYMid slice"
+
+                       />
+                   </g>
+                   <rect x={0} y={0} width={"100%"} height={60} opacity={0.5} fill={"black"}/>
+                   <rect x={0} y={50} width={"100%"} height={3}  fill={"#73583F"}/>
+
+                   <g>
+                       <text x={10} y={20} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
+                       <text x={size.width > size.height?"50%":"100%"} y={20} transform={`translate(${size.width > size.height?-60:-(94 + score.toString().length * 10)} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
+                       <text x={size.width > size.height?"100%":"10"} y={size.width > size.height?20:45} transform={`translate(${size.width > size.height?-94:0} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
+                       <text style={styleCombo} x={size.width > size.height?"50%":"100%"} y={size.width > size.height?45:45} transform={`translate(${size.width > size.height?-50:-94} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}> Комбо: x{combo}</text>
+                       {size.width > size.height && (<g onPointerDown={(e) => {
+                           e.stopPropagation();
+                           useStore.getState().setSettingsOpen(true)
+                           useStore.getState().setPause(true)
+                           if(ysdkInit){
+                               ysdkInit.features.GameplayAPI?.stop()
+                           }
+                           sharpEffect.play()
+                       }} transform={`translate(${size.width / ratio} 55) scale(0.2)`}>
+                           <g transform={`translate(-260 0) `}>
+                               <SettingsBtn/>
+                           </g>
+                       </g>)}
+                   </g>
+
+
+
+                   <g transform={`translate(${(size.width / ratio) / 2 - (size.width > size.height?190:145)} ${size.width > size.height?50:55})`}>
+                       {boardTiles.map((tile)=>{
+                           const isOpen = isTileOpen(tile, boardTiles);
+                           const canBeTarget = isOpen && selectedHandId !== null;
+                           return <svg  x={tile.x * (size.width > size.height?32:42)}  y={tile.y * (size.width > size.height?44.5:58) - (tile.z)} width={size.width > size.height?34:44} height={size.width > size.height?54:64} viewBox={"0 0 64 84"} key={tile.id + "board"}
+
+                           >
+                               <g  style={{
+                                   filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) brightness(1)`,
+                                   transition: '.5s',
+                                   ...(handId === tile.id ? {opacity:0} : {opacity:1})
+                               }} onPointerDown={() => handleBoardTileClick(tile)}>
+                                   <TileSvg typeId={tile.typeId} />
+                                   <rect
+                                       x={4}
+                                       y={2}
+                                       width={"82%"}
+                                       height={"90%"}
+                                       rx={6}
+                                        opacity={0.8}
+                                       fill="none"
+                                       stroke="url(#card-gradient-1)"       // единый цвет рамки
+                                       strokeWidth={6}       // единая толщина
+                                   />
+                                   {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`translate(20 55)`}>
+                                           <Arrow/>
+                                       <rect onPointerDown={(e) => {
+                                           e.stopPropagation();
+                                           if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
+                                               setCountDirect(prev => prev - 1);
+                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
+                                               useStore.getState().setBoardTiles(d);
+                                               boardMoveEffect.play()
+                                           }
+                                       }}  opacity={0} x={-20} y={0} width={"100%"} height={"30"}/>
+                                   </g>}
+                                   {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-90 50 30) translate(29 15)`}>
+                                       <Arrow/>
+                                       <rect onPointerDown={(e) => {
+                                           e.stopPropagation();
+                                           if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
+                                               setCountDirect(prev => prev - 1);
+                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
+                                               useStore.getState().setBoardTiles(d);
+                                               boardMoveEffect.play()
+                                           }
+                                       }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
+                                   </g>}
+                                   {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(90 50 30) translate(50 55)`}>
+                                       <Arrow/>
+                                       <rect onPointerDown={(e) => {
+                                           e.stopPropagation();
+                                           if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
+                                               setCountDirect(prev => prev - 1);
+                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
+                                               useStore.getState().setBoardTiles(d);
+                                               boardMoveEffect.play()
+                                           }
+                                       }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
+                                   </g>}
+                                   {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-180 50 30) translate(60 35)`}>
+                                       <Arrow/>
+                                       <rect onPointerDown={(e) => {
+                                           e.stopPropagation();
+                                           if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
+                                               setCountDirect(prev => prev - 1);
+                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
+                                               useStore.getState().setBoardTiles(d);
+                                               boardMoveEffect.play()
+                                           }
+                                       }} opacity={0} x={-18} y={0} width={"55"} height={"30"} />
+                                   </g>}
+                                   {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0  && (<g>
+                                       <Hammer/>
+                                   </g>)}
+                               </g>
+
+                           </svg>
+
+                       })}
+                   </g>
+                       <svg x={size.width > size.height?(size.width / ratio / 2) + 30:(size.width / ratio / 2) - 160} width={size.width > size.height?160:350} y={size.width > size.height?100:420} height={size.width > size.height?140:230}>
+                           <svg width={"100%"} height={size.width > size.height?95:59}>
+                           <g transform={`translate(${size.width > size.height?20:0} 0)`}>
+                               <rect x={0} y={2} rx={5}  width={size.width > size.height?129:322} height={"100%"} fill={"#1C1B1B"} />
+                           {splitArray(hand, size.width > size.height?hand.length / 4:hand.length / 8).map((el, j)=>el.map((tile, i)=> {
+                               const isSelected = tile.id === selectedHandId;
+                              return <svg onPointerDown={() => handleHandTileClick(tile.id)}
+                                    x={i * (size.width > size.height ? 32 : 40)}
+                                    y={j * (size.width > size.height ? 45 : 55)}
+                                    width={size.width > size.height ? 34 : 44}
+                                    height={size.width > size.height ? 54 : 64} viewBox={"0 0 64 84"}
+                                    key={tile.id + "hand"}>
+                                   <TileSvg typeId={tile.typeId}/>
+                                   <rect x={2} y={0} width={"90%"} height={"95%"} fill={"none"} rx={5} strokeWidth={4}
+                                       style={{
+                                           transition: '.5s',
+                                           ...(isSelected ? {filter: "drop-shadow(0 0 4px rgba(142, 16, 16, 0.6))", stroke:"#8E1010"} : {}),
+                                       }}
+                                   />
+                               </svg>
+                           }))}
+                           </g>
+                           </svg>
+                           <g transform={`translate(${size.width > size.height?0:9} 0)`}>
+                           <g onPointerDown={directClick}>
+                                <MahjongBonusIcon active={direct} width={size.width > size.height?"50":"80"} x={size.width > size.height?"12":"0"} y={size.width > size.height?"55":"0"} count={countDirect} />
+                            </g>
+                           <g onPointerDown={crashClick}>
+                               <HammerBtn width={size.width > size.height?"50":"80"} x={size.width > size.height?"62":"75"} y={size.width > size.height?"55":"0"} active={crash} count={countCrash} />
+                           </g>
+                           <g onPointerDown={startGame}>
+                               <RestartBtn width={size.width > size.height?"50":"80"} x={size.width > size.height?"110":"150"} y={size.width > size.height?"55":"0"} active={false} />
+                           </g>
+                               {size.width < size.height && (<g onPointerDown={(e) => {
+                                   e.stopPropagation();
+                                   useStore.getState().setSettingsOpen(true)
+                                   useStore.getState().setPause(true)
+                                   if(ysdkInit){
+                                       ysdkInit.features.GameplayAPI?.stop()
+                                   }
+                                   sharpEffect.play()
+                               }} transform={`translate(239 75) scale(0.27)`}>
+                                   <g>
+                                       <SettingsBtn/>
+                                   </g>
+                               </g>)}
+                           </g>
+                       </svg>
+
+                   {settingsOpen && ( <Settings width={size.width} height={size.height} ratio={ratio} />)}
+               </svg>
+               {/*<Settings width={size.width} height={size.height} ratio={ratio} r={false}/>*/}
+            </>
+        default:
     return (
         <>
             <div>
@@ -328,127 +583,141 @@ export default function MahjongDomino() {
                 <TopMenu score={score} deck={currentLevel} combo={combo} />
                 <div className={"playing-field"}>
                     <div className={"playing-field-item"}>
-                    {boardTiles.map(tile => {
-                        const isOpen = isTileOpen(tile, boardTiles);
-                        const canBeTarget = isOpen && selectedHandId !== null;
-                        return (
-                            <div
-                                className={"stone-field"}
-                                key={tile.id + "board"}
-                                onPointerDown={() => handleBoardTileClick(tile)}
-                                style={{
-                                    ...styles.tile,
-                                    position: 'absolute',
-                                    left: `${tile.x * 60}px`,
-                                    top: `${tile.y * 80 - (tile.z * 10)}px`,
-                                    zIndex: tile.z * 10 + Math.floor(tile.y),
-                                    boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
-                                    ...(isOpen ? styles.tileOpen : styles.tileLocked),
-                                    ...(canBeTarget ? styles.tileHighlight : {}),
-                                    ...(handId === tile.id ? { transform: 'scale(0)', transition: '.5s' } : {})
-                                }}
-                            >
-                                <div style={styles.svgContainer}>
-                                    <TileSvg typeId={tile.typeId} />
-                                    {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0 ? (
-                                        <animated.div style={crashAnimate} className={"crash_2"}>
-                                            <img src={"./img/crash_2.png"} alt="crash effect" />
-                                        </animated.div>
-                                    ) : ""}
+                        <div className={"board-box"}>
+                            {boardTiles.map(tile => {
+                                const isOpen = isTileOpen(tile, boardTiles);
+                                const canBeTarget = isOpen && selectedHandId !== null;
 
-                                    {/* Смещения плиток (Инструмент Направления) */}
-                                    {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
-                                        e.stopPropagation();
-                                        if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
-                                            setCountDirect(prev => prev - 1);
-                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
-                                            useStore.getState().setBoardTiles(d);
-                                            boardMoveEffect.play()
-                                        }
-                                    }} className={"field-top"}>
-                                         <img className={"arrow"} style={{ transform: 'rotate(-90deg)' }} src={"./img/arrow.png"} alt="up" />
-                                    </div>}
+                                return (
+                                    <div
+                                        className={"stone-field"}
+                                        key={tile.id + "board"}
+                                        onPointerDown={() => handleBoardTileClick(tile)}
+                                        style={{
+                                            ...styles.tile,
+                                            position: 'absolute',
+                                            left: `${tile.x * 70}px`,
+                                            top: `${tile.y * 90 - (tile.z * 10)}px`,
+                                            zIndex: !Number.isNaN(Math.floor(tile.y))? tile.z * 10 + Math.floor(tile.y):0,
+                                            boxShadow: `${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6), inset -3px -3px 5px #b0ab8b`,
+                                            ...(isOpen ? styles.tileOpen : styles.tileLocked),
+                                            ...(canBeTarget ? styles.tileHighlight : {}),
+                                            ...(handId === tile.id ? { transform: 'scale(0)', transition: '.5s' } : {})
+                                        }}
+                                    >
+                                        <div style={styles.svgContainer}>
+                                            <TileSvg typeId={tile.typeId} />
+                                            {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0 ? (
+                                                <animated.div style={crashAnimate} className={"crash_2"}>
+                                                    <img src={"./img/crash_2.png"} alt="crash effect" />
+                                                </animated.div>
+                                            ) : ""}
 
-                                    {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
-                                        e.stopPropagation();
-                                        if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
-                                            setCountDirect(prev => prev - 1);
-                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
-                                            useStore.getState().setBoardTiles(d);
-                                            boardMoveEffect.play()
-                                        }
-                                    }} className={"field-left"}>
-                                         <img className={"arrow"} style={{ transform: 'rotate(-180deg)' }} src={"./img/arrow.png"} alt="left" />
-                                    </div>}
+                                            {/* Смещения плиток (Инструмент Направления) */}
+                                            {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                                if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
+                                                    setCountDirect(prev => prev - 1);
+                                                    const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
+                                                    useStore.getState().setBoardTiles(d);
+                                                    boardMoveEffect.play()
+                                                }
+                                            }} className={"field-top"}>
+                                                <img className={"arrow"} style={{ transform: 'rotate(-90deg)' }} src={"./img/arrow.png"} alt="up" />
+                                            </div>}
 
-                                    {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
-                                        e.stopPropagation();
-                                        if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
-                                            setCountDirect(prev => prev - 1);
-                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
-                                            useStore.getState().setBoardTiles(d);
-                                            boardMoveEffect.play()
-                                        }
-                                    }} className={"field-right"}>
-                                         <img className={"arrow"} style={{ transform: 'rotate(0deg)' }} src={"./img/arrow.png"} alt="right" />
-                                    </div>}
+                                            {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                                if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
+                                                    setCountDirect(prev => prev - 1);
+                                                    const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
+                                                    useStore.getState().setBoardTiles(d);
+                                                    boardMoveEffect.play()
+                                                }
+                                            }} className={"field-left"}>
+                                                <img className={"arrow"} style={{ transform: 'rotate(-180deg)' }} src={"./img/arrow.png"} alt="left" />
+                                            </div>}
 
-                                    {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
-                                        e.stopPropagation();
-                                        if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
-                                            setCountDirect(prev => prev - 1);
-                                            const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
-                                            useStore.getState().setBoardTiles(d);
-                                            boardMoveEffect.play()
-                                        }
-                                    }} className={"field-bottom"}>
-                                        <img className={"arrow"} style={{ transform: 'rotate(90deg)' }} src={"./img/arrow.png"} alt="down" />
-                                    </div>}
-                                </div>
-                            </div>
-                        );
-                    })}
+                                            {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 &&<div onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                                if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
+                                                    setCountDirect(prev => prev - 1);
+                                                    const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
+                                                    useStore.getState().setBoardTiles(d);
+                                                    boardMoveEffect.play()
+                                                }
+                                            }} className={"field-right"}>
+                                                <img className={"arrow"} style={{ transform: 'rotate(0deg)' }} src={"./img/arrow.png"} alt="right" />
+                                            </div>}
 
-                    <div className={"hand"}>
-                        {boardTiles.length !== 0 && (
-                            <div className={"hand-box"}>
-                                {hand.map(tile => {
-                                    const isSelected = tile.id === selectedHandId;
-                                    return (
-                                        <div className={"handTile"} key={tile.id}>
-                                            <div className={"hand-item"} onPointerDown={() => handleHandTileClick(tile.id)}>
-                                                <TileSvg typeId={tile.typeId} />
-                                                <div style={isSelected ? { boxShadow: '0 0 4px 4px #d12613' } : {}} className={"hand-item-effect"} />
-                                            </div>
+                                            {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <div onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                                if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
+                                                    setCountDirect(prev => prev - 1);
+                                                    const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
+                                                    useStore.getState().setBoardTiles(d);
+                                                    boardMoveEffect.play()
+                                                }
+                                            }} className={"field-bottom"}>
+                                                <img className={"arrow"} style={{ transform: 'rotate(90deg)' }} src={"./img/arrow.png"} alt="down" />
+                                            </div>}
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className={"hand"}>
+                            {boardTiles.length !== 0 && (
+                                <div className={"hand-box"}>
+                                    {hand.map(tile => {
+                                        const isSelected = tile.id === selectedHandId;
+                                        return (
+                                            <div className={"handTile"} key={tile.id}>
+                                                <div className={"hand-item"} onPointerDown={() => handleHandTileClick(tile.id)}>
+                                                    <TileSvg typeId={tile.typeId} />
+                                                    <div style={isSelected ? { boxShadow: '0 0 4px 4px #d12613' } : {}} className={"hand-item-effect"} />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
 
-                        {boardTiles.length !== 0 && (
-                            <div className={"hand-btn"}>
-                                <div className={"direct"} onClick={directClick}>
-                                    <img src={"./img/direct.png"}  alt="direct" />
-                                    <div style={direct ? { opacity: 1 } : {}} className={"btn-hover"} />
-                                    <div className={"btn-counter"}>{countDirect}</div>
+                            {boardTiles.length !== 0 && (
+                                <div className={"hand-btn"}>
+                                    <div className={"direct"} onClick={directClick}>
+                                        <img src={"./img/direct.png"}  alt="direct" />
+                                        <div style={direct ? { opacity: 1 } : {}} className={"btn-hover"} />
+                                        <div className={"btn-counter"}>{countDirect}</div>
+                                    </div>
+                                    <div className={"crash"} onClick={crashClick} >
+                                        <img src={"./img/crash.png"} alt="crash" />
+                                        <div style={crash ? { opacity: 1 } : {}} className={"btn-hover"} />
+                                        <div className={"btn-counter"}>{countCrash}</div>
+                                    </div>
+                                    <div className={"restart"} onClick={(e) => {
+                                        e.stopPropagation();
+                                        startGame();
+                                    }} >
+                                        <div className={"btn-hover"} />
+                                        <img src={"./img/restart.png"} alt="restart" />
+                                    </div>
+                                    <div className={"settings-btn"} onClick={(e) => {
+                                        e.stopPropagation();
+                                        useStore.getState().setSettingsOpen(true)
+                                        useStore.getState().setPause(true)
+                                        if(ysdkInit){
+                                            ysdkInit.features.GameplayAPI?.stop()
+                                        }
+                                        sharpEffect.play()
+                                    }} >
+                                        <div className={"btn-hover"} />
+                                        <img src={"./img/settings.png"} alt="restart" />
+                                    </div>
                                 </div>
-                                <div className={"crash"} onClick={crashClick} >
-                                    <img src={"./img/crash.png"} alt="crash" />
-                                    <div style={crash ? { opacity: 1 } : {}} className={"btn-hover"} />
-                                    <div className={"btn-counter"}>{countCrash}</div>
-                                </div>
-                                <div className={"restart"} onClick={(e) => {
-                                    e.stopPropagation();
-                                    startGame();
-                                }} >
-                                    <div className={"btn-hover"} />
-                                    <img src={"./img/restart.png"} alt="restart" />
-                                </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
             {boardTiles.length === 0 && load && (
@@ -458,10 +727,17 @@ export default function MahjongDomino() {
             {settingsOpen && ( <Settings /> )}
         </>
     );
+    }
+}
+
 }
 
 
 const styles = {
+    main:{
+        position:"fixed",
+        zIndex:10
+    },
     screenWrapper: {
         display: 'flex',
         flexDirection: 'column',
@@ -544,8 +820,8 @@ const styles = {
     },
     tile: {
         position: 'absolute',
-        width: '54px',
-        height: '74px',
+        width: '64px',
+        height: '84px',
         background: 'linear-gradient(135deg, #fffff0 0%, #eaddbd 100%)',
         borderRadius: '6px',
         display: 'flex',
@@ -668,5 +944,14 @@ const styles = {
         fontSize: '26px',
         fontWeight: 'bold',
         zIndex: 999
+    },
+    start:{
+        position:"fixed",
+        top:0,
+        bottom:0,
+        right: 0,
+        left: 0,
+        margin: "auto"
     }
+
 };

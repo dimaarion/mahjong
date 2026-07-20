@@ -1,6 +1,6 @@
 import {useSpring,animated} from "@react-spring/web";
 import {useEffect, useState} from "react";
-import {useStore} from "./store.js";
+
 
 export default function Load(){
     const [resize, setResize] = useState(0)
@@ -18,9 +18,7 @@ export default function Load(){
     }, []);
 
     useEffect(()=>{
-        if(resize > 1040){
-            useStore.getState().setLoad(true)
-        }
+
     },[resize])
 
     return <div className={"load"}>

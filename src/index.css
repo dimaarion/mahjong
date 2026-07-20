@@ -4,8 +4,18 @@
   cursor:url("./assets/cursor.png"), pointer;
 }
 
+img{
+    pointer-events: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+     user-select: none;
+}
+
 body{
   background: #0A0100;
+  margin: 0;
+  padding: 0;
+  font-family: "Huninn", sans-serif;
 }
 
 .text-range{
@@ -209,18 +219,8 @@ input[type=range]::-webkit-slider-thumb{
 
 }
 
-.settings-btn{
-  position: absolute;
-  right: 20px;
-  bottom: -100px;
-  width: 80px;
-  height: 80px;
 
-}
-.settings-btn img{
-  width: 100%;
-  height: 100%;
-}
+
 
 .bg-top-menu{
   position: absolute;
@@ -329,6 +329,11 @@ input[type=range]::-webkit-slider-thumb{
   bottom: 650px;
 }
 
+.board-box{
+  position: relative;
+  right: 60px;
+}
+
 
 .hand{
   position: absolute;
@@ -341,7 +346,10 @@ input[type=range]::-webkit-slider-thumb{
 
 .hand-btn{
   position: relative;
-  top: 180px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  top: 10px;
 }
 
 
@@ -409,25 +417,10 @@ input[type=range]::-webkit-slider-thumb{
   bottom: 120px;
 
 }
-.restart, .crash, .direct{
-  position: absolute;
+.restart, .crash, .direct, .settings-btn{
+  position: relative;
   width: 50px;
   height: 50px;
-  bottom: 120px;
-  left: auto;
-
-}
-
-.restart{
-  right: 30px;
-}
-
-.crash{
-  right: 105px;
-}
-
-.direct{
-  right: 180px;
 }
 
 .btn-hover{
@@ -695,7 +688,7 @@ input[type=range]::-webkit-slider-thumb{
     right: 760px;
     bottom: 600px;
   }
-  .top-menu-title, .top-menu-score, .top-menu-step{
+  .top-menu-title, .top-menu-score, .top-menu-step, .kombo{
     top: 5px;
     height: auto;
     font-weight: 400;
@@ -719,12 +712,21 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 @media (max-width: 820px) and (orientation: portrait) {
+  .top-menu-title, .top-menu-score, .top-menu-step, .kombo{
+   font-size: 15pt;
+  }
+
   .playing-field{
     transform: scale(0.8);
   }
   .playing-field-item{
     right: 750px;
-    bottom: 800px;
+    bottom: 850px;
+  }
+  .board-box{
+    position: relative;
+    right: 20px;
+    bottom: 40px;
   }
   .settings-body{
     transform:  scale(0.4);
@@ -744,32 +746,7 @@ input[type=range]::-webkit-slider-thumb{
   }
   .hand-btn{
     position: relative;
-    left: 0;
-    top:-20px;
   }
-
-
-  .restart, .crash, .direct{
-    top: auto;
-    bottom: -100px;
-  }
-
-  .restart{
-
-    right: 100px;
-
-  }
-
-  .direct{
-    right: 350px;
-  }
-
-  .crash{
-    right: 0;
-    left: 0;
-    margin: auto;
-  }
-
 
   .modal-content{
     transform: scale(0.5);
@@ -792,20 +769,15 @@ input[type=range]::-webkit-slider-thumb{
     width: auto;
   }
 
-  .settings-btn{
-    position: absolute;
-    right: 8px;
-    bottom: -75px;
-    width: 60px;
-    height: 60px;
-  }
-
-
 }
 
-@media (max-width: 360px) {
+@media (max-width: 390px) and (orientation: portrait) {
   .playing-field{
-
+    transform: scale(0.6);
+  }
+  .playing-field-item{
+    right: 860px;
+    bottom: 1100px;
   }
 }
 
@@ -814,6 +786,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 @media (max-height: 840px) and (orientation: landscape) {
+
   .playing-field{
     transform: scale(1);
   }
@@ -824,43 +797,22 @@ input[type=range]::-webkit-slider-thumb{
   .top-menu{
     height: 30px;
   }
-  .top-menu-step{
-    right: auto;
-    left: 14px;
-    top: 40px;
-    height: 30px;
-    font-weight: 400;
-    font-size: 30px;
-    line-height: 20px;
 
-  }
-  .top-menu-title, .top-menu-score{
+  .top-menu-title, .top-menu-score, .kombo, .top-menu-step{
     top: 5px;
     height: 30px;
     font-weight: 400;
-    font-size: 30px;
+    font-size: 15pt;
     line-height: 20px;
   }
-  .modal-content{
-    transform: scale(0.5);
-  }
-  .modal-content-item{
-    right: 800px;
-    bottom: 500px;
-  }
+
 
 
   .kombo{
     margin-top: 20px;
   }
 
-  .settings-body {
-    transform: scale(0.4);
-  }
-  .settings-body-item {
-    right: 1120px;
-    bottom: 750px;
-  }
+
 
 }
 
@@ -872,6 +824,13 @@ input[type=range]::-webkit-slider-thumb{
     right: 800px;
     bottom: 750px;
   }
+  .modal-content{
+    transform: scale(0.5);
+  }
+  .modal-content-item{
+    right: 800px;
+    bottom: 500px;
+  }
 }
 
 @media (max-height: 540px) and (orientation: landscape) {
@@ -880,7 +839,14 @@ input[type=range]::-webkit-slider-thumb{
   }
   .playing-field-item{
     right: 1000px;
-    bottom: 920px;
+    bottom: 960px;
+  }
+  .settings-body {
+    transform: scale(0.4);
+  }
+  .settings-body-item {
+    right: 1120px;
+    bottom: 750px;
   }
 }
 

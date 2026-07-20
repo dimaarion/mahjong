@@ -1,9 +1,7 @@
-export default function Music({content = "", icon="music", sound = 0.5, setSound = ()=>{}}){
+export default function Music({icon="music"}){
 
-    return <div className={"music"}>
-        <div>
-            {icon === "music"?<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                  className="bi bi-music-note-beamed" viewBox="0 0 16 16">
+    return icon === "music"?<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                   viewBox="0 0 16 16">
                 <path
                     d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"/>
                 <path fillRule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"/>
@@ -25,12 +23,5 @@ export default function Music({content = "", icon="music", sound = 0.5, setSound
                 <path d="M0.555176 0L0.755478 0C1.06209 0 1.4332 0.216394 1.57012 0.490737C2.05334 1.4589 3.04259 3.71989 3.04259 6.00404C3.04259 8.29566 2.04686 10.6106 1.5654 11.596C1.43079 11.8715 1.06209 12.0892 0.755478 12.0892L0.555176 12.0892C0.248561 12.0892 0.127433 11.8757 0.270826 11.6047C0.789563 10.6242 1.87236 8.3024 1.87236 6.00404C1.87236 3.71284 0.796291 1.44495 0.275684 0.481809C0.129886 0.212076 0.248561 0 0.555176 0Z" fill="#F1EEE9" fillRule="evenodd" transform="matrix(1 0 0 1 1.298 0)" />
                 </g>
                 </g>
-                </svg>}
-
-        </div>
-        <div className={"music-content"}>
-            <div className={"text-family text-range"}>{content} / {sound * 100} %</div>
-            <input value={sound} onChange={setSound} type={"range"} step={0.1} min={0} max={1} className={"range"} />
-        </div>
-    </div>
+                </svg>
 }

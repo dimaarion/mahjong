@@ -1,8 +1,7 @@
-import Database from "./Database.js";
 import {useEffect, useMemo} from "react";
 import {useStore} from "./store.js";
 import { Howl } from 'howler';
-import Ysdk from "./Ysdk.js";
+
 
 
 export function percent(n,n2){
@@ -156,10 +155,10 @@ export const isTileOpen = (tile, allTiles) => {
          if(tile.x <= 0){
              neighbors.left = true;
          }
-         if(tile.x >= 5){
+         if(tile.x >= 6){
              neighbors.right = true;
          }
-         if(tile.y >= 5){
+         if(tile.y >= 4){
              neighbors.bottom = true;
          }
          if(tile.y <= 0){
@@ -300,7 +299,7 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
         const currentLayerSize = baseSize - z;
         if (currentLayerSize <= 0) break;
 
-        for (let xIndex = 0; xIndex < currentLayerSize; xIndex++) {
+        for (let xIndex = 0; xIndex < currentLayerSize + 2; xIndex++) {
             for (let yIndex = 0; yIndex < currentLayerSize; yIndex++) {
 
                 // Рандом для первого слоя. На верхних слоях плотность регулируется наличием опоры
@@ -345,7 +344,7 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
 };
 
  export const getLevelDifficultyConfig = (levelNumber) => {
-     const BASE_SIZE = 6; // Жесткий лимит ширины поля
+     const BASE_SIZE = 5; // Жесткий лимит ширины поля
 
      // 1. Рассчитываем этажность пирамиды
      let maxLayers = 1;
@@ -359,7 +358,7 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
 
 
      // 3. Лимит тактических ходов (сдвиги и молотки)
-     const shiftsLimit = levelNumber <= 3 ? 3 : Math.max(3, 7 - Math.floor(levelNumber / 4));
+     const shiftsLimit = Math.min(3, 7 - Math.floor(levelNumber / 4));
      const hammersLimit = levelNumber < 4 ? 0 : (levelNumber > 15 ? 2 : 1);
 
      // 4. Плотность заполнения пирамиды (от 0.6 до 0.9)
@@ -375,11 +374,16 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
      };
  };
 
- export const db = new Database()
- export const ysdk = new Ysdk()
-//db.remove()
- db.create()
-ysdk.lang()
-ysdk.getData()
+
+export function splitArray(arr, parts) {
+    const result = []
+    const size = Math.ceil(arr.length / parts)
+
+    for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size))
+    }
+
+    return result
+}
 
 

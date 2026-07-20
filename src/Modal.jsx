@@ -1,7 +1,7 @@
 import {useStore} from "./store.js";
-
-import {db, useGameEffectAudio, ysdk} from "./action.js";
+import {useGameEffectAudio} from "./action.js";
 import {useEffect} from "react";
+import Database from "./Database.js";
 export default function Modal({
                                   startGame,
                                   score = 0,
@@ -10,6 +10,7 @@ export default function Modal({
     const currentLevel = useStore((state) => state.currentLevel);
     const effect = useStore((state) => state.effect);
     const victoryEffect = useGameEffectAudio("./audio/game-won.mp3",effect);
+    const db = new Database()
     useEffect(() => {
         useStore.getState().setPause(true)
     }, []);
@@ -17,6 +18,7 @@ export default function Modal({
     useEffect(() => {
         victoryEffect.play()
     }, [victoryEffect]);
+
 
     return (
         <div className={"modal"}>
@@ -40,6 +42,7 @@ export default function Modal({
                                 <div onPointerDown={()=>{
                                     useStore.getState().setCurrentLevel(currentLevel)
                                     useStore.getState().setPause(false)
+                                    db.setLevel(currentLevel)
                                     startGame()
                                 }} className={"modal-btn"}>
                                     <img src={"./img/btn-bg.png"} />
@@ -48,7 +51,8 @@ export default function Modal({
                                 <div onPointerDown={()=>{
                                     useStore.getState().setCurrentLevel(currentLevel + 1)
                                     startGame()
-                                    db.setScore(score)
+                                    db.setScore(db.getAll().score + score)
+                                    db.setLevel(currentLevel + 1)
                                     useStore.getState().setPause(false)
                                     }} className={"modal-btn"}>
                                     <img src={"./img/btn-bg.png"} />

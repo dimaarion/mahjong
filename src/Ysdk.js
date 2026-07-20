@@ -1,55 +1,55 @@
-import {db} from "./action.js";
-
-export default class Ysdk{
-
-    async initSDK(){
-        return  await YaGames?.init();
+export class Ysdk {
+    constructor() {
+        this.ysdk = null;
+        this._initPromise = null;
     }
 
-    ready(){
-        this.initSDK().then((ysdk) => {
-            ysdk.features.LoadingAPI?.ready()
-        })
-            .catch(console.error);
+    async getInstance() {
+        if (this.ysdk) return this.ysdk;
+        if (this._initPromise) return this._initPromise;
+
+        if (typeof YaGames === 'undefined') {
+            throw new Error('YaGames SDK not found');
+        }
+
+        this._initPromise = YaGames.init().then(sdk => {
+            this.ysdk = sdk;
+            return sdk;
+        });
+
+        return this._initPromise;
     }
 
-    start(){
-        this.initSDK().then((ysdk) => {
-                ysdk.features.GameplayAPI?.start()
+    async getLang() {
+        const ysdk = await this.getInstance();
+        const rawLang = ysdk?.environment?.i18n?.lang;
+        const supported = ['ru', 'en', 'tr', 'es', 'pt', 'id', 'vi', 'ar'];
+        return supported.includes(rawLang) ? rawLang : 'ru';
+    }
+
+    ready() {
+        return this.getInstance().then(ysdk => {
+            if (ysdk?.features?.LoadingAPI) {
+                ysdk.features.LoadingAPI.ready();
+            }
+        });
+    }
+
+
+    async start(){
+      return  this.getInstance().then((ysdk) => {
+          if (ysdk?.features?.LoadingAPI) {
+              ysdk.features.GameplayAPI?.start()
+          }
             });
     }
 
     stop(){
-        this.initSDK().then((ysdk) => {
-                ysdk.features.GameplayAPI?.stop()
+      return  this.getInstance().then((ysdk) => {
+          if (ysdk?.features?.LoadingAPI) {
+              ysdk.features.GameplayAPI?.stop()
+          }
             });
     }
 
-     getData(){
-         this.initSDK().then((ysdk)=>{
-          ysdk.getPlayer().then((res)=>{
-              res.getData().then((d)=>{
-                  if(d?.level){
-                      db.setAll(d)
-                  }
-
-              })
-          })
-      })
-    }
-
-    setData(){
-        this.initSDK().then((ysdk)=>{
-            ysdk.getPlayer().then((res)=>{
-                res.setData(db.getAll(),true)
-            })
-        })
-    }
-
-    lang(){
-        this.initSDK().then((ysdk) => {
-            ysdk.environment.i18n.lang;
-        });
-
-    }
 }
