@@ -2,7 +2,7 @@ import Music from "./sound/Music.jsx";
 import {useStore} from "./store.js";
 import { useGameEffectAudio} from "./action.js";
 import Database from "./Database.js";
-import {SettingsMusicSlider} from "./Objects.jsx";
+import {BannerFrame, SettingsBackgroundGroup, SettingsMusicSlider} from "./Objects.jsx";
 
 export default function Settings({width = 0, height = 0, ratio = 0, r = true}) {
     const m = useStore((state) => state.music);
@@ -16,8 +16,8 @@ export default function Settings({width = 0, height = 0, ratio = 0, r = true}) {
     }
 
     function effectChange(e){
-        useStore.getState().setEffect(e.target.value);
-        db.setEffect(e.target.value);
+        useStore.getState().setEffect(e);
+        db.setEffect(e);
     }
 
 
@@ -26,16 +26,24 @@ if(r){
         <rect opacity={0.9} fill={"black"} width={"100%"} height={"100%"} />
         <g width={350} height={250} transform={`translate(${width / ratio / 2} ${height / ratio / 2})`}>
             <g transform={`translate(-175 -125)`}>
-                <image href={"./img/modal.png"} width={"350"} height={250}  />
+                <g transform={"scale(0.4) translate(120 0)"}>
+                    <SettingsBackgroundGroup />
+                </g>
+
                 <text x={125}   y={40} width={"350"} height={"auto"} fontSize={20} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Настройки</text>
-                <g transform={`translate(36 50)`}  >
-                    <rect filter="url(#filter_settings_1)" width={280} height={50} rx={10} />
-                    <text x={79} y={20} fill={"url(#gradient_title)"} fontSize={10}>Общее количество очков</text>
-                    <text x={138 - (db.getAll().score.toString().length * 2)} y={38} fill={"url(#gradient_title)"} fontSize={10}>{db.getAll().score}</text>
-                    <rect y={60} filter="url(#filter_settings_1)" width={280} height={90} rx={10} />
-                    <g transform={`translate(0 70)`}>
+                <g transform={`translate(36 40)`}  >
+                    <g transform={`translate(0 0)`}>
+                        <text x={45} y={20} fill={"url(#gradient_title)"} fontSize={15}>Общее количество очков</text>
+                        <text x={138 - (db.getAll().score.toString().length * 2)} y={38} fill={"url(#gradient_title)"} fontSize={15}>{db.getAll().score}</text>
+                    </g>
+
+                    <g transform={`translate(0 50)`}>
                         <g transform={`translate(25 0)`}>
-                            <SettingsMusicSlider value={m} width={250} onChange={musicChange} defaultValue={0.5} min={0} max={1} label={"Музыка"} step={0.01} disabled={false} />
+                            <SettingsMusicSlider type={"music"} thumbColor={"#00965F"} fillColor={"#00965F"} trackColor={"#000"} value={m} width={220} onChange={musicChange} defaultValue={0.5} min={0} max={1} label={"Музыка"} step={0.01} disabled={false} />
+                        </g>
+
+                        <g transform={`translate(25 50)`}>
+                            <SettingsMusicSlider type={"effect"} thumbColor={"#00965F"} fillColor={"#00965F"} trackColor={"#000"} value={ef} width={220} onChange={effectChange} defaultValue={0.5} min={0} max={1} label={"Музыка"} step={0.01} disabled={false} />
                         </g>
 
                     </g>
@@ -51,8 +59,10 @@ if(r){
                     }
                     sharpEffect.play()
                 }}>
-                    <image x={125} y={195} href={"./img/btn-bg.png"} width={"100"} height={50} />
-                    <text x={153}   y={223} width={"350"} height={"auto"} fontSize={12} fill={"white"} filter={"url(#filter_title_2)"}>Закрыть</text>
+                <g transform={"scale(0.3) translate(390 620)"}>
+                    <BannerFrame fillColor={"#AD020F"} tx={50} text={"Закрыть"}/>
+                </g>
+
                 </g>
 
 

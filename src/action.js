@@ -387,3 +387,16 @@ export function splitArray(arr, parts) {
 }
 
 
+export function checkImageAvailable(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+
+        // Картинка успешно загрузилась
+        img.onload = () => resolve(true);
+
+        // Ошибка загрузки (404, неверный URL, проблема с CORS и т.д.)
+        img.onerror = () => resolve(false);
+
+        img.src = url;
+    });
+}

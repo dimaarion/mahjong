@@ -35,6 +35,7 @@ import Plum from "./Plum.jsx";
 import TopMenu from "../TopMenu.jsx";
 import Modal from "../Modal.jsx";
 import {
+    checkImageAvailable,
     generateOrganicPyramid, getLevelDifficultyConfig, getTileNeighbors,
     isTileOpen, splitArray, useGameEffectAudio
 } from "../action.js";
@@ -42,7 +43,16 @@ import {useSpring,animated} from "@react-spring/web";
 import {useStore} from "../store.js";
 import Settings from "../Settings.jsx";
 import {Ysdk} from "../Ysdk.js";
-import {Arrow, Hammer, HammerBtn, MahjongBonusIcon, RestartBtn, SettingsBtn} from "../Objects.jsx";
+import {
+    Arrow, BannerFrame,
+    BgGameScene,
+    Hammer,
+    HammerBtn,
+    MahjongBonusIcon,
+    PlayButtonGroup,
+    RestartBtn,
+    SettingsBtn, SvgIcon
+} from "../Objects.jsx";
 
 
 const TILE_TYPES = [
@@ -199,7 +209,7 @@ export default function MahjongDomino() {
     }, [boardTiles, setPause, ysdkInit]);
 
     useEffect(() => {
-       // startGame();
+
     }, []);
 
     const crashAnimate = useSpring({
@@ -346,26 +356,28 @@ export default function MahjongDomino() {
 
     }),[combo])
 
+
+
+
     const r = true
 
 if(!start){
-    return <svg width={"100%"} height={"100%"} style={styles.start} preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    return <svg  style={styles.start}  width={size.width} height={size.height} viewBox={`${0} ${0} ${size.width / ratio} ${size.height / ratio}`} xmlns="http://www.w3.org/2000/svg">
         <g>
-                <image
-                    href="./img/start-bg.png"
-                    width="100%"
-                    height="100%"
-                    preserveAspectRatio="xMidYMid slice"
+               <rect width={"100%"} height={"100%"} fill={"#008047"} />
 
-                />
         </g>
-        <g onPointerDown={()=> {
-            startGame()
-            setStart(true)
-            useStore.getState().setPause(false)
-        }}>
-            <image x={"50%"} y={"50%"} width={300} transform={`translate(-150 -60)`} href="./img/start-game.png" />
+        <g transform={`translate(${size.width / ratio / 2 - 160 } ${size.height / ratio / 2 - 160 }) scale(0.35)`}>
+            <SvgIcon />
+            <g transform={'translate(265 360)'} onPointerDown={()=> {
+                startGame()
+                setStart(true)
+                useStore.getState().setPause(false)
+            }}>
+                <BannerFrame fillColor={"#A10283"}/>
+            </g>
         </g>
+
 
     </svg>
 }else {
@@ -402,17 +414,12 @@ if(!start){
                                <feColorMatrix type="matrix" values="0 0 0 0 0.227 0 0 0 0 0.78 0 0 0 0 0.141 0 0 0 1 0" />
                                <feBlend mode="normal"  result="InnerShadow" />
                            </filter>
+
                        </defs>
 
 
-                   <g>
-                       <image
-                           href="./img/bg-game.png"
-                           width="100%"
-                           height="100%"
-                           preserveAspectRatio="xMidYMid slice"
-
-                       />
+                   <g transform={`translate(-600 -250)`}>
+                      <BgGameScene/>
                    </g>
                    <rect x={0} y={0} width={"100%"} height={60} opacity={0.5} fill={"black"}/>
                    <rect x={0} y={50} width={"100%"} height={3}  fill={"#73583F"}/>
@@ -568,10 +575,12 @@ if(!start){
                                </g>)}
                            </g>
                        </svg>
-
+                   {boardTiles.length === 0 && start && (
+                       <Modal width={size.width} height={size.height} ratio={ratio}  score={score} combo={combo} startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+                   )}
                    {settingsOpen && ( <Settings width={size.width} height={size.height} ratio={ratio} />)}
                </svg>
-               {/*<Settings width={size.width} height={size.height} ratio={ratio} r={false}/>*/}
+
             </>
         default:
     return (
