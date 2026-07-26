@@ -1,5 +1,5 @@
-export default function Tiger(){
-    return<svg width="100%" viewBox="0 0 151.764 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+export default function Tiger({width = "100%"}){
+    return<svg width={width} viewBox="0 0 151.764 212" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
         <filter colorInterpolationFilters="sRGB" x="-137.764" y="-198" width="139.764" height="200" id="filter_1">
         <feFlood floodOpacity="0" result="BackgroundImageFix_1" />

@@ -70,7 +70,7 @@ export const MahjongBonusIcon = ({x = "0", y = "0", width = "50", count = 2, act
 export const Arrow = ()=>(
 <g>
     <defs>
-    <filter color-interpolation-filters="sRGB" x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_arrow_1">
+    <filter colorInterpolationFilters={"sRGB"}  x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_arrow_1">
     <feFlood floodOpacity="0" result="BackgroundImageFix_arrow_1" />
     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_arrow_1" result="Shape_arrow_2" />
     <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_arrow_3" />

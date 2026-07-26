@@ -1,4 +1,3 @@
-import Music from "./sound/Music.jsx";
 import {useStore} from "./store.js";
 import { useGameEffectAudio} from "./action.js";
 import Database from "./Database.js";
@@ -20,8 +19,6 @@ export default function Settings({width = 0, height = 0, ratio = 0, r = true}) {
         db.setEffect(e);
     }
 
-
-if(r){
     return<g>
         <rect opacity={0.9} fill={"black"} width={"100%"} height={"100%"} />
         <g width={350} height={250} transform={`translate(${width / ratio / 2} ${height / ratio / 2})`}>
@@ -70,39 +67,4 @@ if(r){
 
         </g>
     </g>
-
-}else {
-
-    return <div className={"settings"}>
-                <div className={"modal-bg"}/>
-                <div className={"settings-body"}>
-                    <div className={"settings-body-item"}>
-                        <img src={"./img/modal.png"} />
-                        <h2 className={"modal-title text-family"}>Настройки</h2>
-                            <div className={"content total-score"}>
-                                <div className={"text-family"}>
-                                    <div>Общее количество очков</div>
-                                    <div>{db.getAll().score}</div>
-                                </div>
-                            </div>
-                            <div className={"content sound"}>
-                                <h3 className={"text-family title-sound"}>Звук и музыка</h3>
-                                <Music content={"Музыка"} icon={"music"} setSound={musicChange} sound={m} />
-                                <Music content={"Звуковые эффекты"} icon={"sound"} setSound={effectChange} sound={ef} />
-                            </div>
-                            <div onPointerDown={()=>{
-                                useStore.getState().setSettingsOpen(false)
-                                useStore.getState().setPause(false)
-                              if(ysdkInit){
-                                  ysdkInit.features.GameplayAPI?.start()
-                              }
-                                sharpEffect.play()
-                                }} className={"settings-close"}>
-                                <div className={"modal-btn-text"}>Закрыть</div>
-                                <img width={"100%"} height={"100%"} src={"./img/btn-bg.png"} />
-                            </div>
-                    </div>
-                </div>
-            </div>
-}
 }

@@ -168,7 +168,13 @@ function App() {
     });
   },[])
 
+  useEffect(() => {
+    window.addEventListener('resize', ()=>{
+      useStore.getState().setSize({width: window.innerWidth, height: window.innerHeight});
+      useStore.getState().setRatio((window.innerWidth + window.innerHeight) / 1000);
 
+    });
+  }, []);
 
   return<div>
     {!load?<Load/>:<MahjongDomino/>}

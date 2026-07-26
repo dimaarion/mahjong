@@ -23,9 +23,6 @@ export default function Modal({
         victoryEffect.play()
     }, [victoryEffect]);
 
-    const l = true
-
-    if(l){
         return<g>
             <rect opacity={0.9} fill={"black"} width={"100%"} height={"100%"} />
             <g transform={`translate(${width / ratio / 2 - 175} ${height / ratio / 2 - 125})`}>
@@ -58,53 +55,7 @@ export default function Modal({
             </g>
         </g>
 
-    }else {
-        return (
-            <div className={"modal"}>
-                <div className={"modal-bg"}/>
-                <div className={"modal-content"}>
-                    <div className={"modal-content-item"}>
-                        <div className={"modal-title text-family"}>
-                            Победа
-                        </div>
-                        <div className={"modal-body"}>
-                            <div className={"text-family modal-body-text"}>
-                                Общий счет: {db.getAll().score + score}
-                            </div>
-                            <div className={"text-family modal-body-text"}>
-                                Счет за уровень: {score}
-                            </div>
-                            <div className={"text-family modal-body-text"}>
-                                Комбо: x{combo}
-                            </div>
-                            <div className={"modal-footer"}>
-                                <div onPointerDown={()=>{
-                                    useStore.getState().setCurrentLevel(currentLevel)
-                                    useStore.getState().setPause(false)
-                                    db.setLevel(currentLevel)
-                                    startGame()
-                                }} className={"modal-btn"}>
-                                    <img src={"./img/btn-bg.png"} />
-                                    <div className={"modal-btn-text"}>Заново</div>
-                                </div>
-                                <div onPointerDown={()=>{
-                                    useStore.getState().setCurrentLevel(currentLevel + 1)
-                                    startGame()
-                                    db.setScore(db.getAll().score + score)
-                                    db.setLevel(currentLevel + 1)
-                                    useStore.getState().setPause(false)
-                                }} className={"modal-btn"}>
-                                    <img src={"./img/btn-bg.png"} />
-                                    <div className={"modal-btn-text"}>Продолжить</div>
-                                </div>
-                            </div>
-                        </div>
-                        <img src={"./img/modal.png"}/>
-                    </div>
-                </div>
-            </div>
-        )
-    }
+
 
 
 }
