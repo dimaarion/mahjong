@@ -1,7 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {useStore} from "./store.js";
-import { Howl } from 'howler';
-
+import {Howl} from 'howler';
 
 
 export function percent(n,n2){
@@ -30,19 +29,17 @@ export const useGameAudio = () => {
 };
 
 export const useGameEffectAudio = (name = "", volume = 0.5) => {
-    const sounds = useMemo(() => {
-       return  new Howl({
+    // Автоматическая остановка всех звуков при размонтировании
+
+
+    return useMemo(() => {
+        return new Howl({
             src: [name],
             html5: false, // Используем Web Audio API (скрывает из трея)
             loop: false,
             volume: volume // начальная громкость из состояния,
         })
-    }, [name,volume]);
-
-    // Автоматическая остановка всех звуков при размонтировании
-
-
-    return sounds;
+    }, [name, volume]);
 };
 
 
@@ -374,7 +371,6 @@ export const generateOrganicPyramid = (baseSize = 6, maxLayers = 6, fillDensity 
      };
  };
 
-
 export function splitArray(arr, parts) {
     const result = []
     const size = Math.ceil(arr.length / parts)
@@ -385,7 +381,6 @@ export function splitArray(arr, parts) {
 
     return result
 }
-
 
 export function checkImageAvailable(url) {
     return new Promise((resolve) => {
@@ -399,4 +394,13 @@ export function checkImageAvailable(url) {
 
         img.src = url;
     });
+}
+
+export function getViewBox(size){
+    return size.width > size.height?{width:1920,height:1080}:{width:1080,height:1920}
+}
+
+
+export function getSizeBox(size,n1,n2){
+    return size.width > size.height?{width:n1,height:n2}:{width:n2,height:n1}
 }

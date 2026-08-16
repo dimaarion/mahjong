@@ -1,8 +1,7 @@
 import {useSpring,animated} from "@react-spring/web";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useStore} from "./store.js";
-import Dzy from "./components/Dzy.jsx";
-import Tiger from "./components/Tiger.jsx";
+
 
 
 export default function Load(){

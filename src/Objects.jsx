@@ -802,12 +802,11 @@ export const PlayButtonGroup = ({
 
 
 
-export const SvgIcon = ({color = '#AD020F', className = '', ...props }) => {
+export const SvgIcon = ({color = '#AD020F', className = ''}) => {
     return (
         <g
             fill={"none"}
             className={className}
-            {...props}
         >
             <g>
                 <ellipse rx={450} fill={"#1C120F"} transform="translate(450 450)" />
@@ -1012,7 +1011,10 @@ export const BannerFrame = ({
                     fillRule="evenodd"
                     transform="translate(11.5 12.5)"
                 />
-                <text filter={"url(#filter_start_1)"} x={tx} y={ty} fill={textColor} fontSize={fontSize}>{text}</text>
+                <g>
+                    <text  x={tx} y={ty} fill={textColor} fontSize={fontSize}>{text}</text>
+                </g>
+
             </g>
         </g>
     );

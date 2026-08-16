@@ -34,7 +34,7 @@ import Orchid from "./Orchid.jsx";
 import Plum from "./Plum.jsx";
 import Modal from "../Modal.jsx";
 import {
-    generateOrganicPyramid, getLevelDifficultyConfig, getTileNeighbors,
+    generateOrganicPyramid, getLevelDifficultyConfig, getSizeBox, getTileNeighbors, getViewBox,
     isTileOpen, splitArray, useGameEffectAudio
 } from "../action.js";
 import {useSpring, animated} from "@react-spring/web";
@@ -342,12 +342,12 @@ export default function MahjongDomino() {
 
 
 if(!start){
-    return <svg  style={styles.start}  width={size.width} height={size.height} viewBox={`${0} ${0} ${size.width / ratio} ${size.height / ratio}`} xmlns="http://www.w3.org/2000/svg">
+    return <svg  style={styles.start}  width={size.width} height={size.height} viewBox={`${0} ${0} ${getViewBox(size).width} ${getViewBox(size).height}`} xmlns="http://www.w3.org/2000/svg">
         <g>
                <rect width={"100%"} height={"100%"} fill={"#008047"} />
 
         </g>
-        <g transform={`translate(${size.width / ratio / 2 - 160 } ${size.height / ratio / 2 - 160 }) scale(0.35)`}>
+        <g transform={`translate(${getSizeBox(size,505,87).width} ${getSizeBox(size,505,87).height})`}>
             <SvgIcon />
             <g transform={'translate(265 360)'} onPointerDown={()=> {
                 startGame()
@@ -408,16 +408,14 @@ if(!start){
 
                    <g>
                        <text x={10} y={20} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
-                       <text x={size.width > size.height?"50%":"100%"} y={20} transform={`translate(${size.width > size.height?-60:-(94 + score.toString().length * 10)} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
+                       <text x={size.width > size.height?"50%":"100%"} y={20} transform={`translate(${size.width > size.height?-30:-(94 + score.toString().length * 10)} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
                        <text x={size.width > size.height?"100%":"10"} y={size.width > size.height?20:45} transform={`translate(${size.width > size.height?-94:0} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
-                       <g transform={`translate(${size.width > size.height?-50:-94} 0)`}>
+                       <g transform={`translate(${size.width > size.height?-22:-94} 0)`}>
                            <g fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"} transform={`translate(${size.width > size.height?size.width / ratio / 2:size.width / ratio} ${size.width > size.height?41:45})`}>
                                <g transform={'translate(35 5)'}>
                                    <animated.ellipse  style={styleCombo}  fill={"#E2ED11"} filter={"url(#filter_combo_1)"} />
                                </g>
-                               <text  > Комбо: x{combo}</text>
-
-
+                               <text> Комбо: x{combo}</text>
                            </g>
                             </g>
                        {size.width > size.height && (<g onPointerDown={(e) => {
