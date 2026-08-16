@@ -404,3 +404,7 @@ export function getViewBox(size){
 export function getSizeBox(size,n1,n2){
     return size.width > size.height?{width:n1,height:n2}:{width:n2,height:n1}
 }
+
+export function getSize(size,n1,n2){
+    return size.width > size.height?n1:n2
+}

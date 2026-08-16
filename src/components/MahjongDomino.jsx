@@ -34,7 +34,7 @@ import Orchid from "./Orchid.jsx";
 import Plum from "./Plum.jsx";
 import Modal from "../Modal.jsx";
 import {
-    generateOrganicPyramid, getLevelDifficultyConfig, getSizeBox, getTileNeighbors, getViewBox,
+    generateOrganicPyramid, getLevelDifficultyConfig, getSize, getSizeBox, getTileNeighbors, getViewBox,
     isTileOpen, splitArray, useGameEffectAudio
 } from "../action.js";
 import {useSpring, animated} from "@react-spring/web";
@@ -332,8 +332,8 @@ export default function MahjongDomino() {
     };
 
     const [styleCombo] = useSpring(()=>({
-        from: {rx:"0",ry:"2"},
-        to: [{rx:"80",ry:"2" },{rx:(combo * 10).toString(),ry:"2" }],
+        from: {rx:"0",ry:"4"},
+        to: [{rx:"80",ry:"4" },{rx:(combo * 10).toString(),ry:"4" }],
         loop: false,
         config: { tension: 500 },
     }),[combo])
@@ -342,7 +342,7 @@ export default function MahjongDomino() {
 
 
 if(!start){
-    return <svg  style={styles.start}  width={size.width} height={size.height} viewBox={`${0} ${0} ${getViewBox(size).width} ${getViewBox(size).height}`} xmlns="http://www.w3.org/2000/svg">
+    return <svg  style={styles.main}  width={size.width} height={size.height} viewBox={`${0} ${0} ${getViewBox(size).width} ${getViewBox(size).height}`} xmlns="http://www.w3.org/2000/svg">
         <g>
                <rect width={"100%"} height={"100%"} fill={"#008047"} />
 
@@ -362,7 +362,7 @@ if(!start){
     </svg>
 }else {
            return <>
-               <svg  xmlns="http://www.w3.org/2000/svg" style={styles.main} width={size.width} height={size.height} viewBox={`${0} ${0} ${size.width / ratio} ${size.height / ratio}`}>
+               <svg  xmlns="http://www.w3.org/2000/svg" style={styles.start}  width={size.width} height={size.height} viewBox={`${0} ${0} ${getViewBox(size).width} ${getViewBox(size).height}`}>
                    <defs>
                        <linearGradient id="gradient_title" gradientUnits="userSpaceOnUse" x1="65" y1="0" x2="65" y2="34">
                            <stop offset="0" stopColor="#FACEAF" />
@@ -400,19 +400,19 @@ if(!start){
                        </defs>
 
 
-                   <g transform={`translate(-600 -250)`}>
-                      <BgGameScene/>
+                   <g transform={`translate(0 0)`}>
+                      <image width={"100%"} href={getSize(size,"./img/bg-game.png","./img/bg-game-p.png") }/>
                    </g>
-                   <rect x={0} y={0} width={"100%"} height={60} opacity={0.5} fill={"black"}/>
-                   <rect x={0} y={50} width={"100%"} height={3}  fill={"#73583F"}/>
+                   <rect x={0} y={0} width={"100%"} height={100} opacity={0.5} fill={"black"}/>
+                   <rect x={0} y={100} width={"100%"} height={3}  fill={"#73583F"}/>
 
                    <g>
-                       <text x={10} y={20} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
-                       <text x={size.width > size.height?"50%":"100%"} y={20} transform={`translate(${size.width > size.height?-30:-(94 + score.toString().length * 10)} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
-                       <text x={size.width > size.height?"100%":"10"} y={size.width > size.height?20:45} transform={`translate(${size.width > size.height?-94:0} 0)`} width={"auto"} height={"auto"} fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
-                       <g transform={`translate(${size.width > size.height?-22:-94} 0)`}>
-                           <g fontSize={15} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"} transform={`translate(${size.width > size.height?size.width / ratio / 2:size.width / ratio} ${size.width > size.height?41:45})`}>
-                               <g transform={'translate(35 5)'}>
+                       <text x={20} y={40} width={"auto"} height={"auto"} fontSize={40} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
+                       <text x={getSize(size,850,450)} y={40} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={40} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
+                       <text x={getSize(size,1680,850)} y={getSize(size,40,40)} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={40} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
+                       <g transform={`translate(${getSize(size,860,450)} 80)`}>
+                           <g fontSize={40} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"} transform={`translate(${0} ${0})`}>
+                               <g transform={'translate(100 8)'}>
                                    <animated.ellipse  style={styleCombo}  fill={"#E2ED11"} filter={"url(#filter_combo_1)"} />
                                </g>
                                <text> Комбо: x{combo}</text>
@@ -435,15 +435,15 @@ if(!start){
 
 
 
-                   <g transform={`translate(${(size.width / ratio) / 2 - (size.width > size.height?190:145)} ${size.width > size.height?50:55})`}>
+                   <g transform={`translate(${0} ${0})`}>
                        {boardTiles.map((tile)=>{
                            const isOpen = isTileOpen(tile, boardTiles);
                            const canBeTarget = isOpen && selectedHandId !== null;
-                           return <svg  x={tile.x * (size.width > size.height?32:42)}  y={tile.y * (size.width > size.height?44.5:58) - (tile.z)} width={size.width > size.height?34:44} height={size.width > size.height?54:64} viewBox={"0 0 64 84"} key={tile.id + "board"}
+                           return <svg  x={tile.x * getSize(size,100,100)}  y={tile.y * (getSize(size,135,135)) - (tile.z)} width={getSize(size,100,100)} height={getSize(size,200,200)} viewBox={"0 0 64 84"} key={tile.id + "board"}
 
                            >
                                <g  style={{
-                                   filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) brightness(1)`,
+                                   filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) `,
                                    transition: '.5s',
                                    ...(handId === tile.id ? {opacity:0} : {opacity:1})
                                }} onPointerDown={() => handleBoardTileClick(tile)}>
