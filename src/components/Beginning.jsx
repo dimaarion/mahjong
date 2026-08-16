@@ -1,20 +1,6 @@
 export default function Beginning(){
 
     return <svg width="100%"  viewBox="0 0 151.764 212" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-        <filter colorInterpolationFilters="sRGB" x="-137.764" y="-198" width="139.764" height="200" id="filter_1">
-        <feFlood floodOpacity="0" result="BackgroundImageFix_1" />
-        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" />
-        <feOffset dx="4" dy="4" />
-        <feGaussianBlur stdDeviation="2" />
-        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
-        <feBlend mode="normal" in2="BackgroundImageFix_1" result="Shadow_2" />
-        <feBlend mode="normal" in="SourceGraphic" in2="Shadow_2" result="Shape_3" />
-        </filter>
-    <clipPath id="clip_path_2">
-        <rect width="139.764" height="200" rx="15" />
-    </clipPath>
-</defs>
     <g  transform="translate(2 2)">
         <rect width="139.764" height="200" fill="#F1EEE9" rx={15}  />
         <g transform="translate(0 0)">
