@@ -443,7 +443,7 @@ if(!start){
 
                            >
                                <g  style={{
-                                   filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) `,
+
                                    transition: '.5s',
                                    ...(handId === tile.id ? {opacity:0} : {opacity:1})
                                }} onPointerDown={() => handleBoardTileClick(tile)}>
