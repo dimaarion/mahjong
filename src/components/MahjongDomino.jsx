@@ -419,7 +419,7 @@ if(!start){
                    <rect x={0} y={getSize(size,110,150)} width={"100%"} height={3}  fill={"#73583F"}/>
 
                    <g>
-                       <text x={20} y={getSize(size,50,50)} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={isIOS?"white":"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
+                       <text x={20} y={getSize(size,50,50)} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} >Маджонг - домино</text>
                        <text x={getSize(size,850,20)} y={getSize(size,45,130)} transform={`translate(${getSize(size,-score.toString().length * 10,0) } 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
                        <text x={getSize(size,1680,840)} y={getSize(size,50,50)} transform={`translate(${-currentLevel.toString().length * 32} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
