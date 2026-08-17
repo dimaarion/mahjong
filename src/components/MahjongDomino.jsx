@@ -425,17 +425,14 @@ if(!start){
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} >
                                <g transform={'translate(100 8)'}>
-                                   <animated.ellipse  cx={0}
+                                   <ellipse  cx={0}
                                                       cy={0}
-                                                      rx={25} /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
-                                                      ry={15}
+                                                      rx={(combo * 10)} /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
+                                                      ry={3}
                                                       style={{
-                                                          ...styleCombo,
                                                           fill: "#E2ED11",
                                                           filter: "blur(3px)",
-                                                          WebkitFilter: "blur(3px)", /* Префикс для старых версий WebKit */
-                                                          willChange: "transform, filter", /* Принудительный GPU-слой для Safari */
-                                                          transform: "translateZ(0)",
+                                                          transition:"0.5s"
                                                       }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
