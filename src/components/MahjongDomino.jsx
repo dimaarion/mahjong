@@ -444,154 +444,156 @@ if(!start){
                    </g>
 
 
+<g transform={`translate(${getSize(size,-155,-100)} ${getSize(size,-70,-10)}) scale(1.2)`}>
+    <g transform={`translate(${getSize(size,300,190)} ${getSize(size,190,190)})`}>
+        {boardTiles.map((tile)=>{
+            const isOpen = isTileOpen(tile, boardTiles);
+            const canBeTarget = isOpen && selectedHandId !== null;
+            return <svg  x={tile.x * getSize(size,100,100)}  y={tile.y * (getSize(size,135,135)) - (tile.z)} width={getSize(size,100,100)} height={getSize(size,200,200)} viewBox={"0 0 64 84"} key={tile.id + "board"}
 
-                   <g transform={`translate(${getSize(size,300,190)} ${getSize(size,190,190)})`}>
-                       {boardTiles.map((tile)=>{
-                           const isOpen = isTileOpen(tile, boardTiles);
-                           const canBeTarget = isOpen && selectedHandId !== null;
-                           return <svg  x={tile.x * getSize(size,100,100)}  y={tile.y * (getSize(size,135,135)) - (tile.z)} width={getSize(size,100,100)} height={getSize(size,200,200)} viewBox={"0 0 64 84"} key={tile.id + "board"}
+            >
+                <g  style={{
+                    filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) `,
+                    transition: '.5s',
+                    ...(handId === tile.id ? {opacity:0} : {opacity:1})
+                }} onPointerDown={() => handleBoardTileClick(tile)}>
+                    <TileSvg typeId={tile.typeId} />
+                    <rect
+                        x={4}
+                        y={2}
+                        width={"82%"}
+                        height={"90%"}
+                        rx={6}
+                        opacity={0.8}
+                        fill="none"
+                        stroke="url(#card-gradient-1)"       // единый цвет рамки
+                        strokeWidth={6}       // единая толщина
+                    />
+                    {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`translate(20 55)`}>
+                        <Arrow/>
+                        <rect onPointerDown={(e) => {
+                            e.stopPropagation();
+                            if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
+                                setCountDirect(prev => prev - 1);
+                                const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
+                                useStore.getState().setBoardTiles(d);
+                                boardMoveEffect.play()
+                            }
+                        }}  opacity={0} x={-20} y={0} width={"100%"} height={"30"}/>
+                    </g>}
+                    {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-90 50 30) translate(29 15)`}>
+                        <Arrow/>
+                        <rect onPointerDown={(e) => {
+                            e.stopPropagation();
+                            if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
+                                setCountDirect(prev => prev - 1);
+                                const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
+                                useStore.getState().setBoardTiles(d);
+                                boardMoveEffect.play()
+                            }
+                        }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
+                    </g>}
+                    {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(90 50 30) translate(50 55)`}>
+                        <Arrow/>
+                        <rect onPointerDown={(e) => {
+                            e.stopPropagation();
+                            if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
+                                setCountDirect(prev => prev - 1);
+                                const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
+                                useStore.getState().setBoardTiles(d);
+                                boardMoveEffect.play()
+                            }
+                        }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
+                    </g>}
+                    {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-180 50 30) translate(60 35)`}>
+                        <Arrow/>
+                        <rect onPointerDown={(e) => {
+                            e.stopPropagation();
+                            if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
+                                setCountDirect(prev => prev - 1);
+                                const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
+                                useStore.getState().setBoardTiles(d);
+                                boardMoveEffect.play()
+                            }
+                        }} opacity={0} x={-18} y={0} width={"55"} height={"30"} />
+                    </g>}
+                    {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0  && (<g>
+                        <g>
+                            <Hammer/>
+                        </g>
 
-                           >
-                               <g  style={{
-                                   filter: `drop-shadow(${-tile.z * 2 - 2}px ${tile.z * 2 + 3}px 6px rgba(0,0,0,0.6)) `,
-                                   transition: '.5s',
-                                   ...(handId === tile.id ? {opacity:0} : {opacity:1})
-                               }} onPointerDown={() => handleBoardTileClick(tile)}>
-                                   <TileSvg typeId={tile.typeId} />
-                                   <rect
-                                       x={4}
-                                       y={2}
-                                       width={"82%"}
-                                       height={"90%"}
-                                       rx={6}
-                                        opacity={0.8}
-                                       fill="none"
-                                       stroke="url(#card-gradient-1)"       // единый цвет рамки
-                                       strokeWidth={6}       // единая толщина
-                                   />
-                                   {direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`translate(20 55)`}>
-                                           <Arrow/>
-                                       <rect onPointerDown={(e) => {
-                                           e.stopPropagation();
-                                           if (direct && !getTileNeighbors(tile, boardTiles).bottom && isOpen && selectedHandId === null && countDirect > 0) {
-                                               setCountDirect(prev => prev - 1);
-                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y + stepLength } : el);
-                                               useStore.getState().setBoardTiles(d);
-                                               boardMoveEffect.play()
-                                           }
-                                       }}  opacity={0} x={-20} y={0} width={"100%"} height={"30"}/>
-                                   </g>}
-                                   {direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-90 50 30) translate(29 15)`}>
-                                       <Arrow/>
-                                       <rect onPointerDown={(e) => {
-                                           e.stopPropagation();
-                                           if (direct && !getTileNeighbors(tile, boardTiles).right && isOpen && selectedHandId === null && countDirect > 0) {
-                                               setCountDirect(prev => prev - 1);
-                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x + stepLength } : el);
-                                               useStore.getState().setBoardTiles(d);
-                                               boardMoveEffect.play()
-                                           }
-                                       }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
-                                   </g>}
-                                   {direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(90 50 30) translate(50 55)`}>
-                                       <Arrow/>
-                                       <rect onPointerDown={(e) => {
-                                           e.stopPropagation();
-                                           if (direct && !getTileNeighbors(tile, boardTiles).left && isOpen && selectedHandId === null && countDirect > 0) {
-                                               setCountDirect(prev => prev - 1);
-                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, x: el.x - stepLength } : el);
-                                               useStore.getState().setBoardTiles(d);
-                                               boardMoveEffect.play()
-                                           }
-                                       }} opacity={0} x={-15} y={0} width={"55"} height={"30"} />
-                                   </g>}
-                                   {direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0 && <g  transform={`rotate(-180 50 30) translate(60 35)`}>
-                                       <Arrow/>
-                                       <rect onPointerDown={(e) => {
-                                           e.stopPropagation();
-                                           if (direct && !getTileNeighbors(tile, boardTiles).top && isOpen && selectedHandId === null && countDirect > 0) {
-                                               setCountDirect(prev => prev - 1);
-                                               const d = boardTiles.map(el => el.id === tile.id ? { ...el, y: el.y - stepLength } : el);
-                                               useStore.getState().setBoardTiles(d);
-                                               boardMoveEffect.play()
-                                           }
-                                       }} opacity={0} x={-18} y={0} width={"55"} height={"30"} />
-                                   </g>}
-                                   {crash && isTileOpen(tile, boardTiles) && selectedHandId === null && countCrash > 0  && (<g>
-                                       <g>
-                                           <Hammer/>
-                                       </g>
+                    </g>)}
+                </g>
 
-                                   </g>)}
-                               </g>
+            </svg>
 
-                           </svg>
+        })}
+    </g>
+    <svg x={getSize(size,1160,140)} y={getSize(size,300,1050)} width={getSize(size,420,1000)}  height={getSize(size,630,600)}>
+        <svg  width={getSize(size,405,805)} height={getSize(size,280,140)}>
+            <g transform={`translate(0 ${getSize(size,-25,-28)})`}>
+                <rect x={0} y={2} rx={5}  width={getSize(size,420,900)} height={getSize(size,300,300)} fill={"#1C1B1B"} />
+                {splitArray(hand, size.width > size.height?hand.length / 4:hand.length / 8).map((el, j)=>el.map((tile, i)=> {
+                    const isSelected = tile.id === selectedHandId;
+                    return <svg onPointerDown={() => handleHandTileClick(tile.id)}
+                                x={i * getSize(size,100,100) + 5}
+                                y={j * getSize(size,135,135)}
+                                width={getSize(size,100,100)}
+                                height={getSize(size,200,200)} viewBox={"0 0 64 84"}
+                                key={tile.id + "hand"}>
+                        <TileSvg typeId={tile.typeId}/>
+                        <rect x={2} y={0} width={"90%"} height={"95%"} fill={"none"} rx={5} strokeWidth={4}
+                              style={{
+                                  transition: '.5s',
+                                  ...(isSelected ? {filter: "drop-shadow(0 0 4px rgba(142, 16, 16, 0.6))", stroke:"#8E1010"} : {}),
+                              }}
+                        />
+                    </svg>
+                }))}
+            </g>
+        </svg>
+        <g transform={`translate(${size.width > size.height?0:9} 0)`}>
+            <g onPointerDown={directClick}>
+                <MahjongBonusIcon active={direct} width={getSize(size,130,200)} x={getSize(size,10,0)} y={getSize(size,50,0)} count={countDirect} />
+            </g>
+            <g onPointerDown={crashClick}>
+                <HammerBtn width={getSize(size,130,200)} x={getSize(size,140,200)} y={getSize(size,50,0)} active={crash} count={countCrash} />
+            </g>
+            <g onPointerDown={startGame}>
+                <RestartBtn width={getSize(size,130,200)} x={getSize(size,270,400)} y={getSize(size,50,0)} active={false} />
+            </g>
+            {size.width < size.height && (<g onPointerDown={(e) => {
+                e.stopPropagation();
+                useStore.getState().setSettingsOpen(true)
+                useStore.getState().setPause(true)
+                if(ysdkInit){
+                    ysdkInit.features.GameplayAPI?.stop()
+                }
+                sharpEffect.play()
+            }} transform={`translate(630 200)`}>
+                <g>
+                    <SettingsBtn w={140} h={140}/>
+                </g>
+            </g>)}
+        </g>
+    </svg>
+    {boardTiles.length === 0 && start && (
+        <Modal
+            size={size}
+            width={size.width}
+            height={size.height}
+            ratio={ratio}
+            score={score}
+            combo={combo}
+            startGame={startGame}
+            currentLevel={currentLevel}
+            setCurrentLevel={setCurrentLevel} />
+    )}
+    {settingsOpen && ( <Settings size={size} width={size.width} height={size.height} ratio={ratio} />)}
 
-                       })}
-                   </g>
-                       <svg x={getSize(size,1250,140)} y={getSize(size,300,1050)} width={getSize(size,420,1000)}  height={getSize(size,630,600)}>
-                           <svg  width={getSize(size,405,805)} height={getSize(size,280,140)}>
-                           <g transform={`translate(0 -25)`}>
-                               <rect x={0} y={2} rx={5}  width={getSize(size,420,900)} height={getSize(size,300,300)} fill={"#1C1B1B"} />
-                           {splitArray(hand, size.width > size.height?hand.length / 4:hand.length / 8).map((el, j)=>el.map((tile, i)=> {
-                               const isSelected = tile.id === selectedHandId;
-                              return <svg onPointerDown={() => handleHandTileClick(tile.id)}
-                                    x={i * getSize(size,100,100) + 5}
-                                    y={j * getSize(size,135,135)}
-                                    width={getSize(size,100,100)}
-                                    height={getSize(size,200,200)} viewBox={"0 0 64 84"}
-                                    key={tile.id + "hand"}>
-                                   <TileSvg typeId={tile.typeId}/>
-                                   <rect x={2} y={0} width={"90%"} height={"95%"} fill={"none"} rx={5} strokeWidth={4}
-                                       style={{
-                                           transition: '.5s',
-                                           ...(isSelected ? {filter: "drop-shadow(0 0 4px rgba(142, 16, 16, 0.6))", stroke:"#8E1010"} : {}),
-                                       }}
-                                   />
-                               </svg>
-                           }))}
-                           </g>
-                           </svg>
-                           <g transform={`translate(${size.width > size.height?0:9} 0)`}>
-                           <g onPointerDown={directClick}>
-                                <MahjongBonusIcon active={direct} width={getSize(size,130,200)} x={getSize(size,10,0)} y={getSize(size,50,0)} count={countDirect} />
-                            </g>
-                           <g onPointerDown={crashClick}>
-                               <HammerBtn width={getSize(size,130,200)} x={getSize(size,140,200)} y={getSize(size,50,0)} active={crash} count={countCrash} />
-                           </g>
-                           <g onPointerDown={startGame}>
-                               <RestartBtn width={getSize(size,130,200)} x={getSize(size,270,400)} y={getSize(size,50,0)} active={false} />
-                           </g>
-                               {size.width < size.height && (<g onPointerDown={(e) => {
-                                   e.stopPropagation();
-                                   useStore.getState().setSettingsOpen(true)
-                                   useStore.getState().setPause(true)
-                                   if(ysdkInit){
-                                       ysdkInit.features.GameplayAPI?.stop()
-                                   }
-                                   sharpEffect.play()
-                               }} transform={`translate(630 200)`}>
-                                   <g>
-                                       <SettingsBtn w={140} h={140}/>
-                                   </g>
-                               </g>)}
-                           </g>
-                       </svg>
-                   {boardTiles.length === 0 && start && (
-                       <Modal
-                           size={size}
-                           width={size.width}
-                           height={size.height}
-                           ratio={ratio}
-                           score={score}
-                           combo={combo}
-                           startGame={startGame}
-                           currentLevel={currentLevel}
-                           setCurrentLevel={setCurrentLevel} />
-                   )}
-                   {settingsOpen && ( <Settings size={size} width={size.width} height={size.height} ratio={ratio} />)}
-               </svg>
+</g>
 
+</svg>
             </>
     }
 }
