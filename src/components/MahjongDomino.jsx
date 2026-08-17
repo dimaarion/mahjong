@@ -335,9 +335,9 @@ export default function MahjongDomino() {
 
     const [styleCombo] = useSpring(()=>({
         from: {rx:0},
-        to: [{rx:80},{rx:(combo * 10).toString()}],
+        to: [{rx:80},{rx:(combo * 10)}],
         loop: false,
-        config: { tension: 500 },
+        config: { bounce:2, tension: 500 },
         onChange:()=>{
             if(!comboEffect.playing() && start) {
                 if(!sharpEffect.playing() && !btnEffect.playing() && !restartEffect.playing()){
