@@ -334,8 +334,8 @@ export default function MahjongDomino() {
     };
 
     const [styleCombo] = useSpring(()=>({
-        from: {rx:"0",ry:"5"},
-        to: [{rx:"80",ry:"5" },{rx:(combo * 10).toString(),ry:"5" }],
+        from: {rx:0},
+        to: [{rx:80},{rx:(combo * 10).toString()}],
         loop: false,
         config: { tension: 500 },
         onChange:()=>{
@@ -425,15 +425,14 @@ if(!start){
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} >
                                <g transform={'translate(100 8)'}>
-                                   <ellipse  cx={0}
-                                                      cy={0}
+                                   <animated.ellipse  cx={0}
+                                             cy={0}
                                                        /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
                                                       ry={3}
                                                       style={{
+                                                          ...styleCombo,
                                                           fill: "#E2ED11",
                                                           filter: "blur(3px)",
-                                                          transition:"0.5s",
-                                                          rx:10
                                                       }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
