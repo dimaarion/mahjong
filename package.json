@@ -13,6 +13,7 @@
     "@react-spring/web": "^10.1.2",
     "@types/ysdk": "^1.2.0",
     "howler": "^2.2.4",
+    "mobile-device-detect": "^0.4.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "zustand": "^5.0.14"
