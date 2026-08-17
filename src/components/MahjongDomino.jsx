@@ -407,7 +407,7 @@ if(!start){
                        <filter colorInterpolationFilters="sRGB" x="-200" y="-50" width="400" height="100" id="filter_combo_1">
                            <feFlood floodOpacity="0" result="BackgroundImageFix_combo_1" />
                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_combo_1" result="Shape_combo_2" />
-                           <feGaussianBlur stdDeviation="3" />
+                           <feGaussianBlur stdDeviation="2" />
                        </filter>
                        </defs>
 
@@ -424,8 +424,16 @@ if(!start){
                        <text x={getSize(size,1680,840)} y={getSize(size,50,50)} transform={`translate(${-currentLevel.toString().length * 32} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} >Уровень {currentLevel}</text>
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} >
-                               <g transform={'translate(100 8)'} >
-                                   <animated.ellipse filter={"url(#filter_combo_1)"} fill={"#E2ED11"}  cx={0} cy={0} ry={3} style={styleCombo}  />
+                               <g transform={'translate(100 8)'}>
+                                   <animated.ellipse filter={"#filter_combo_1"}
+                                                      cx={0}
+                                                      cy={0}
+                                                      ry={3}
+                                                      style={{
+                                                          ...styleCombo,
+                                                          fill: "#E2ED11",
+                                                          filter: "blur(3px)",
+                                                      }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
                            </g>
