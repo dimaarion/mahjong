@@ -92,6 +92,8 @@ function App() {
         });
     }
 
+
+
   }, [currentLevel, pause, ysdkInit]);
 
   useEffect(() => {
