@@ -150,6 +150,7 @@ export default function MahjongDomino() {
     const effect = useStore((state) => state.effect);
     const setPause = useStore((state) => state.setPause);
     const start = useStore((state) => state.start);
+    const pause = useStore((state) => state.pause);
     const setStart = useStore((state) => state.setStart);
     // Рефы для контроля асинхронных операций
     const globalTileIdCounter = useRef(0);
@@ -166,6 +167,7 @@ export default function MahjongDomino() {
     const btnEffect = useGameEffectAudio("./audio/choice-error-sound.mp3",effect);
     const restartEffect = useGameEffectAudio("./audio/roll-of-dice.mp3",effect);
     const sharpEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",effect)
+    const comboEffect = useGameEffectAudio("./audio/kombo.mp3",effect)
 
 
 
@@ -336,6 +338,14 @@ export default function MahjongDomino() {
         to: [{rx:"80",ry:"4" },{rx:(combo * 10).toString(),ry:"4" }],
         loop: false,
         config: { tension: 500 },
+        onChange:()=>{
+            if(!comboEffect.playing() && start) {
+                if(!sharpEffect.playing() && !btnEffect.playing() && !restartEffect.playing()){
+                    comboEffect.play()
+                }
+
+            }
+    }
     }),[combo])
 
 
@@ -403,7 +413,7 @@ if(!start){
                    <g transform={`translate(0 0)`}>
                       <image width={"100%"} href={getSize(size,"./img/bg-game.png","./img/bg-game-p.png") }/>
                    </g>
-                   <rect x={0} y={0} width={"100%"} height={100} opacity={0.5} fill={"black"}/>
+                   <rect x={0} y={0} width={"100%"} height={100} opacity={0.9} fill={"black"}/>
                    <rect x={0} y={100} width={"100%"} height={3}  fill={"#73583F"}/>
 
                    <g>
@@ -426,16 +436,16 @@ if(!start){
                                ysdkInit.features.GameplayAPI?.stop()
                            }
                            sharpEffect.play()
-                       }} transform={`translate(${size.width / ratio} 55) scale(0.2)`}>
-                           <g transform={`translate(-260 0) `}>
-                               <SettingsBtn/>
+                       }} transform={`translate(${getSize(size,1800,0)} ${getSize(size,120,0)}) `}>
+                           <g transform={`translate(0 0) `}>
+                               <SettingsBtn />
                            </g>
                        </g>)}
                    </g>
 
 
 
-                   <g transform={`translate(${0} ${0})`}>
+                   <g transform={`translate(${getSize(size,300,190)} ${getSize(size,190,190)})`}>
                        {boardTiles.map((tile)=>{
                            const isOpen = isTileOpen(tile, boardTiles);
                            const canBeTarget = isOpen && selectedHandId !== null;
@@ -519,17 +529,17 @@ if(!start){
 
                        })}
                    </g>
-                       <svg x={size.width > size.height?(size.width / ratio / 2) + 30:(size.width / ratio / 2) - 160} width={size.width > size.height?160:350} y={size.width > size.height?100:420} height={size.width > size.height?140:230}>
-                           <svg width={"100%"} height={size.width > size.height?95:59}>
-                           <g transform={`translate(${size.width > size.height?20:0} 0)`}>
-                               <rect x={0} y={2} rx={5}  width={size.width > size.height?129:322} height={"100%"} fill={"#1C1B1B"} />
+                       <svg x={getSize(size,1250,140)} y={getSize(size,300,1050)} width={getSize(size,420,1000)}  height={getSize(size,630,600)}>
+                           <svg  width={getSize(size,405,805)} height={getSize(size,280,140)}>
+                           <g transform={`translate(0 -25)`}>
+                               <rect x={0} y={2} rx={5}  width={getSize(size,420,900)} height={getSize(size,300,300)} fill={"#1C1B1B"} />
                            {splitArray(hand, size.width > size.height?hand.length / 4:hand.length / 8).map((el, j)=>el.map((tile, i)=> {
                                const isSelected = tile.id === selectedHandId;
                               return <svg onPointerDown={() => handleHandTileClick(tile.id)}
-                                    x={i * (size.width > size.height ? 32 : 40)}
-                                    y={j * (size.width > size.height ? 45 : 55)}
-                                    width={size.width > size.height ? 34 : 44}
-                                    height={size.width > size.height ? 54 : 64} viewBox={"0 0 64 84"}
+                                    x={i * getSize(size,100,100) + 5}
+                                    y={j * getSize(size,135,135)}
+                                    width={getSize(size,100,100)}
+                                    height={getSize(size,200,200)} viewBox={"0 0 64 84"}
                                     key={tile.id + "hand"}>
                                    <TileSvg typeId={tile.typeId}/>
                                    <rect x={2} y={0} width={"90%"} height={"95%"} fill={"none"} rx={5} strokeWidth={4}
@@ -544,13 +554,13 @@ if(!start){
                            </svg>
                            <g transform={`translate(${size.width > size.height?0:9} 0)`}>
                            <g onPointerDown={directClick}>
-                                <MahjongBonusIcon active={direct} width={size.width > size.height?"50":"80"} x={size.width > size.height?"12":"0"} y={size.width > size.height?"55":"0"} count={countDirect} />
+                                <MahjongBonusIcon active={direct} width={getSize(size,130,200)} x={getSize(size,10,0)} y={getSize(size,50,0)} count={countDirect} />
                             </g>
                            <g onPointerDown={crashClick}>
-                               <HammerBtn width={size.width > size.height?"50":"80"} x={size.width > size.height?"62":"75"} y={size.width > size.height?"55":"0"} active={crash} count={countCrash} />
+                               <HammerBtn width={getSize(size,130,200)} x={getSize(size,140,200)} y={getSize(size,50,0)} active={crash} count={countCrash} />
                            </g>
                            <g onPointerDown={startGame}>
-                               <RestartBtn width={size.width > size.height?"50":"80"} x={size.width > size.height?"110":"150"} y={size.width > size.height?"55":"0"} active={false} />
+                               <RestartBtn width={getSize(size,130,200)} x={getSize(size,270,400)} y={getSize(size,50,0)} active={false} />
                            </g>
                                {size.width < size.height && (<g onPointerDown={(e) => {
                                    e.stopPropagation();
@@ -560,17 +570,26 @@ if(!start){
                                        ysdkInit.features.GameplayAPI?.stop()
                                    }
                                    sharpEffect.play()
-                               }} transform={`translate(239 75) scale(0.27)`}>
+                               }} transform={`translate(630 200)`}>
                                    <g>
-                                       <SettingsBtn/>
+                                       <SettingsBtn w={140} h={140}/>
                                    </g>
                                </g>)}
                            </g>
                        </svg>
                    {boardTiles.length === 0 && start && (
-                       <Modal width={size.width} height={size.height} ratio={ratio}  score={score} combo={combo} startGame={startGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+                       <Modal
+                           size={size}
+                           width={size.width}
+                           height={size.height}
+                           ratio={ratio}
+                           score={score}
+                           combo={combo}
+                           startGame={startGame}
+                           currentLevel={currentLevel}
+                           setCurrentLevel={setCurrentLevel} />
                    )}
-                   {settingsOpen && ( <Settings width={size.width} height={size.height} ratio={ratio} />)}
+                   {settingsOpen && ( <Settings size={size} width={size.width} height={size.height} ratio={ratio} />)}
                </svg>
 
             </>
@@ -582,213 +601,6 @@ const styles = {
     main:{
         position:"fixed",
         zIndex:10
-    },
-    screenWrapper: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        minHeight: '100vh',
-        background: 'radial-gradient(circle, #27170c 0%, #0d0603 100%)',
-        color: '#f5f0eb',
-        fontFamily: 'system-ui, sans-serif',
-        padding: '15px 10px',
-        boxSizing: 'border-box',
-        overflow: 'hidden'
-    },
-    header: {
-        width: '100%',
-        maxWidth: '600px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px 20px',
-        background: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: '30px',
-        border: '1px solid rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(10px)',
-        boxSizing: 'border-box'
-    },
-    title: {
-        fontSize: '14px',
-        fontWeight: 'bold',
-        letterSpacing: '1px',
-        color: '#dfb76c',
-    },
-    scoreContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        minWidth: '90px'
-    },
-    scoreText: {
-        fontSize: '15px',
-        fontWeight: 'bold',
-    },
-    comboBadge: {
-        fontSize: '11px',
-        color: '#ff4d4d',
-        fontWeight: 'bold',
-        marginTop: '2px'
-    },
-    statsDeck: {
-        fontSize: '13px',
-        color: '#ccc',
-        '& span': { color: '#dfb76c', fontWeight: 'bold' }
-    },
-    restartBtn: {
-        padding: '6px 14px',
-        background: 'linear-gradient(to bottom, #bd7a22, #86510f)',
-        border: 'none',
-        borderRadius: '15px',
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
-    },
-    gameZone: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '1024px',
-        height: '400px',
-        margin: 'auto',
-        transition: 'transform 0.15s ease',
-        transformOrigin: 'center center'
-    },
-    board: {
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-
-    },
-    tile: {
-        position: 'absolute',
-        width: '64px',
-        height: '84px',
-        background: 'linear-gradient(135deg, #fffff0 0%, #eaddbd 100%)',
-        borderRadius: '6px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease',
-        borderBottom: '5px solid #a89f79',
-        borderLeft: '2px solid #ded9b6',
-        boxSizing: 'border-box',
-        padding: '4px'
-    },
-    tileOpen: {
-        opacity: 1,
-        filter: 'brightness(1)'
-
-    },
-    tileLocked: {
-        opacity: 1,
-        filter: 'brightness(0.95)',
-    },
-    tileHighlight: {
-        /*boxShadow: '0 0 20px #39ff14, inset 0 0 10px rgba(57,255,20,0.6)',*/
-    },
-    svgContainer: {
-        position:"relative",
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    footer: {
-        width: '100%',
-        maxWidth: '600px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        boxSizing: 'border-box'
-    },
-    rackLabel: {
-        fontSize: '11px',
-        color: '#a19385',
-        marginBottom: '6px',
-        textTransform: 'uppercase',
-        letterSpacing: '1px',
-        textAlign: 'center'
-    },
-    bambooRack: {
-        display: 'flex',
-        padding: '12px 15px',
-        background: 'linear-gradient(to right, #382012, #52331c, #382012)',
-        borderRadius: '8px',
-        boxShadow: 'inset 0 4px 4px rgba(0,0,0,0.7), 0 12px 24px rgba(0,0,0,0.6)',
-        borderBottom: '5px solid #1f1109',
-        minHeight: '85px',
-        alignItems: 'flex-end',
-        width: '100%',
-        boxSizing: 'border-box',
-        gap: '15px'
-    },
-    deckDrawButton: {
-        width: '54px',
-        height: '74px',
-        background: 'linear-gradient(135deg, #2c3e50 0%, #1a252f 100%)',
-        borderRadius: '6px',
-        border: '2px dashed #dfb76c',
-        boxSizing: 'border-box',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        transition: 'transform 0.1s ease',
-        '&:active': { transform: 'scale(0.95)' }
-    },
-    deckDrawInside: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        color: '#dfb76c',
-        fontSize: '20px',
-        fontWeight: 'bold',
-        position: 'relative',
-        width: '100%'
-    },
-    penaltyTip: {
-        position: 'absolute',
-        top: '-18px',
-        backgroundColor: '#c0392b',
-        color: '#fff',
-        fontSize: '10px',
-        padding: '1px 4px',
-        borderRadius: '3px',
-        fontWeight: 'normal'
-    },
-    handTilesRow: {
-        display: 'flex',
-        gap: '6px',
-        flexWrap: 'nowrap',
-        overflowX: 'auto',
-        flex: 1,
-        alignItems: 'flex-end',
-        paddingBottom: '2px'
-    },
-    handTile: {
-        width: '62px',
-        height: '85px',
-        float:"right"
-
-
-    },
-    winOverlay: {
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(0,0,0,0.88)',
-        borderRadius: '4px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#dfb76c',
-        fontSize: '26px',
-        fontWeight: 'bold',
-        zIndex: 999
     },
     start:{
         position:"fixed",

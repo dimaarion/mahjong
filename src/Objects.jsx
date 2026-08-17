@@ -82,7 +82,7 @@ export const Arrow = ()=>(
     </filter>
 </defs>
 
-<path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_arrow_1)" transform="scale(0.5)" />
+<path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#2AFF00" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_arrow_1)" transform="scale(0.5)" />
 </g>
 )
 
@@ -108,8 +108,9 @@ export const HammerBtn = ({x = "0", y = "0", width = "50", count = 2, active = f
 
 export const Hammer = ()=>(
     <g transform="translate(0 0) scale(0.3)">
-        <rect  width={80} height={40} fill={"#18533A"}   transform="translate(30 50) rotate(-45 40 20)"/>
-        <rect  width={20} height={100} fill={"#18533A"} transform="translate(60 40) rotate(-45 40 20)"/>
+        <rect  width={20} height={100} fill={"#298f12"} transform="translate(60 40) rotate(-45 40 20)"/>
+        <rect  width={80} height={40} fill={"#54da34"}   transform="translate(30 50) rotate(-45 40 20)"/>
+
     </g>
 )
 
@@ -134,7 +135,8 @@ export const RestartBtn = ({x = "0", y = "0", width = "50", active = false})=>(
     </svg>
 )
 
-export const SettingsBtn = ()=>(
+export const SettingsBtn = ({w = 100,h= 100})=>(
+    <svg width={w} height={h} viewBox={"0 0 200 200"}>
         <g>
             <path
                 d="M0 91.623C0 41.021 41.021 0 91.623 0C142.225 0 183.246 41.021 183.246 91.623C183.246 142.225 142.225 183.246 91.623 183.246C41.021 183.246 0 142.225 0 91.623Z"
@@ -143,6 +145,8 @@ export const SettingsBtn = ()=>(
                 <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
             </g>
         </g>
+    </svg>
+
 
 )
 
@@ -358,7 +362,7 @@ export  function SettingsMusicSlider({
                 height={height}
                 fill="transparent"
                 pointerEvents="all"
-                style={{ touchAction: "none", cursor: disabled ? "default" : "pointer" }}
+                style={{ touchAction: "none", cursor: disabled ? "default" : "./img/cursor.png" }}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
