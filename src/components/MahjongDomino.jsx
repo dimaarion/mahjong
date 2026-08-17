@@ -589,7 +589,7 @@ if(!start){
             currentLevel={currentLevel}
             setCurrentLevel={setCurrentLevel} />
     )}
-    {settingsOpen && ( <Settings size={size} width={size.width} height={size.height} ratio={ratio} />)}
+    {settingsOpen && ( <Settings size={size} />)}
 
 </g>
 

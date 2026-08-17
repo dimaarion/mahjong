@@ -3,7 +3,7 @@ import {getSize, useGameEffectAudio} from "./action.js";
 import Database from "./Database.js";
 import {BannerFrame, SettingsBackgroundGroup, SettingsMusicSlider} from "./Objects.jsx";
 
-export default function Settings({size, width = 0, height = 0, ratio = 0, r = true}) {
+export default function Settings({size}) {
     const m = useStore((state) => state.music);
     const ef = useStore((state) => state.effect);
     const sharpEffect = useGameEffectAudio("./audio/a-sharp-swish-of-cloth.mp3",ef);
