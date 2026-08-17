@@ -417,10 +417,10 @@ if(!start){
                    <rect x={0} y={getSize(size,110,150)} width={"100%"} height={3}  fill={"#73583F"}/>
 
                    <g>
-                       <text x={20} y={40} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
-                       <text x={getSize(size,850,450)} y={40} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
-                       <text x={getSize(size,1680,850)} y={getSize(size,40,40)} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={40} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
-                       <g transform={`translate(${getSize(size,860,450)} ${getSize(size,90,120)})`}>
+                       <text x={20} y={getSize(size,50,50)} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Маджонг - домино</text>
+                       <text x={getSize(size,850,20)} y={getSize(size,45,130)} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Ваш счет: {score}</text>
+                       <text x={getSize(size,1620,780)} y={getSize(size,50,50)} transform={`translate(${-score.toString().length * 10} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}>Уровень {currentLevel}</text>
+                       <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"} transform={`translate(${0} ${0})`}>
                                <g transform={'translate(100 8)'}>
                                    <animated.ellipse  style={styleCombo}  fill={"#E2ED11"} filter={"url(#filter_combo_1)"} />
