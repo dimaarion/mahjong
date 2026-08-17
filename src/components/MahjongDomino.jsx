@@ -427,7 +427,7 @@ if(!start){
                                <g transform={'translate(100 8)'}>
                                    <animated.ellipse  style={Object.assign(styleCombo,{
                                        fill:"#E2ED11",
-                                       filter:"blur(3px)"
+                                      
                                    })}    />
                                </g>
                                <text> Комбо: x{combo}</text>
