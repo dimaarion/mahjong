@@ -337,7 +337,7 @@ export default function MahjongDomino() {
         from: {rx:0},
         to: [{rx:80},{rx:(combo * 10)}],
         loop: false,
-        config: { bounce:2, tension: 500 },
+        config: { friction:20, tension: 500 },
         onChange:()=>{
             if(!comboEffect.playing() && start) {
                 if(!sharpEffect.playing() && !btnEffect.playing() && !restartEffect.playing()){
