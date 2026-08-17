@@ -423,12 +423,20 @@ if(!start){
                        <text x={getSize(size,850,20)} y={getSize(size,45,130)} transform={`translate(${getSize(size,-score.toString().length * 10,0) } 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} >Ваш счет: {score}</text>
                        <text x={getSize(size,1680,840)} y={getSize(size,50,50)} transform={`translate(${-currentLevel.toString().length * 32} 0)`} width={"auto"} height={"auto"} fontSize={getSize(size,50,50)} fill={"url(#gradient_title)"} >Уровень {currentLevel}</text>
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
-                           <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"}  transform={`translate(${0} ${0})`}>
+                           <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} >
                                <g transform={'translate(100 8)'}>
-                                   <animated.ellipse style={Object.assign(styleCombo,{
-                                       fill:"#E2ED11",
-                                       transform:'translate(0px, 0px)'
-                                   })}    />
+                                   <animated.ellipse  cx={0}
+                                                      cy={0}
+                                                      rx={25} /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
+                                                      ry={15}
+                                                      style={{
+                                                          ...styleCombo,
+                                                          fill: "#E2ED11",
+                                                          filter: "blur(3px)",
+                                                          WebkitFilter: "blur(3px)", /* Префикс для старых версий WebKit */
+                                                          willChange: "transform, filter", /* Принудительный GPU-слой для Safari */
+                                                          transform: "translateZ(0)",
+                                                      }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
                            </g>
