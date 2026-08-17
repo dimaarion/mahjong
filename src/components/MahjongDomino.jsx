@@ -334,8 +334,8 @@ export default function MahjongDomino() {
     };
 
     const [styleCombo] = useSpring(()=>({
-        from: {rx:"0",ry:"4"},
-        to: [{rx:"80",ry:"4" },{rx:(combo * 10).toString(),ry:"4" }],
+        from: {rx:"0",ry:"5"},
+        to: [{rx:"80",ry:"5" },{rx:(combo * 10).toString(),ry:"5" }],
         loop: false,
         config: { tension: 500 },
         onChange:()=>{
@@ -425,7 +425,10 @@ if(!start){
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"}  transform={`translate(${0} ${0})`}>
                                <g transform={'translate(100 8)'}>
-                                   <animated.ellipse  style={styleCombo}  fill={"#E2ED11"} filter={"url(#filter_combo_1)"} />
+                                   <animated.ellipse  style={Object.assign(styleCombo,{
+                                       fill:"#E2ED11",
+                                       filter:"blur(3px)"
+                                   })}    />
                                </g>
                                <text> Комбо: x{combo}</text>
                            </g>
@@ -580,6 +583,7 @@ if(!start){
         </g>
     </svg>
     {boardTiles.length === 0 && start && (
+        <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}>
         <Modal
             size={size}
             width={size.width}
@@ -590,8 +594,9 @@ if(!start){
             startGame={startGame}
             currentLevel={currentLevel}
             setCurrentLevel={setCurrentLevel} />
+        </g>
     )}
-    {settingsOpen && ( <Settings size={size} />)}
+    {settingsOpen && (   <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}> <Settings size={size} /></g>)}
 
 </g>
 
