@@ -425,14 +425,14 @@ if(!start){
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"} >
                                <g transform={'translate(100 8)'}>
-                                   <animated.ellipse  cx={0}
-                                             cy={0}
+                                   <animated.ellipse filter={"#filter_combo_1"}  cx={0}
+                                                        cy={0}
                                                        /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
                                                       ry={3}
                                                       style={{
                                                           ...styleCombo,
                                                           fill: "#E2ED11",
-                                                          filter: "blur(3px)",
+                                                         
                                                       }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
