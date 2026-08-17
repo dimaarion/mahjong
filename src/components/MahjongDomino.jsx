@@ -425,9 +425,9 @@ if(!start){
                        <g transform={`translate(${getSize(size,860,840)} ${getSize(size,90,120)})`}>
                            <g fontSize={getSize(size,45,45)} fill={"url(#gradient_title)"}  transform={`translate(${0} ${0})`}>
                                <g transform={'translate(100 8)'}>
-                                   <animated.ellipse  style={Object.assign(styleCombo,{
+                                   <animated.ellipse x={0} y={0}  style={Object.assign(styleCombo,{
                                        fill:"#E2ED11",
-                                      
+
                                    })}    />
                                </g>
                                <text> Комбо: x{combo}</text>
