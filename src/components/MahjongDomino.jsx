@@ -427,12 +427,13 @@ if(!start){
                                <g transform={'translate(100 8)'}>
                                    <ellipse  cx={0}
                                                       cy={0}
-                                                      rx={(combo * 10)} /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
+                                                       /* Убедитесь, что rx и ry передаются явными атрибутами, а не только через style */
                                                       ry={3}
                                                       style={{
                                                           fill: "#E2ED11",
                                                           filter: "blur(3px)",
-                                                          transition:"0.5s"
+                                                          transition:"0.5s",
+                                                          rx:10
                                                       }}    />
                                </g>
                                <text> Комбо: x{combo}</text>
