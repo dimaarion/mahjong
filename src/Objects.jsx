@@ -4,46 +4,6 @@ export const MahjongBonusIcon = ({x = "0", y = "0", width = "50", count = 2, act
 
 <svg width={width} x={x} y={y} viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-    <filter colorInterpolationFilters="sRGB" x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_move_1">
-    <feFlood floodOpacity="0" result="BackgroundImageFix_move_1" />
-    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_move_1" result="Shape_move_2" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_move_3" />
-    <feOffset dx="0" dy="0" />
-    <feGaussianBlur stdDeviation="2" />
-    <feComposite operator="arithmetic" k2="-1" k3="1" in2="HardAlpha_move_3" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
-    <feBlend mode="normal" in2="Shape_move_2" result="InnerShadow_4" />
-    </filter>
-<filter colorInterpolationFilters="sRGB" x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_mave_2">
-    <feFlood floodOpacity="0" result="BackgroundImageFix_move_1" />
-    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_move_1" result="Shape_move_2" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_move_3" />
-    <feOffset dx="0" dy="0" />
-    <feGaussianBlur stdDeviation="2" />
-    <feComposite operator="arithmetic" k2="-1" k3="1" in2="HardAlpha_move_3" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
-    <feBlend mode="normal" in2="Shape_move_2" result="InnerShadow_4" />
-</filter>
-<filter colorInterpolationFilters="sRGB" x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_mave_3">
-    <feFlood floodOpacity="0" result="BackgroundImageFix_move_1" />
-    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_move_1" result="Shape_move_2" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_move_3" />
-    <feOffset dx="0" dy="0" />
-    <feGaussianBlur stdDeviation="2" />
-    <feComposite operator="arithmetic" k2="-1" k3="1" in2="HardAlpha_move_3" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
-    <feBlend mode="normal" in2="Shape_move_2" result="InnerShadow_4" />
-</filter>
-<filter colorInterpolationFilters="sRGB" x="-40.454" y="-46.856" width="42.454" height="48.856" id="filter_mave_4">
-    <feFlood floodOpacity="0" result="BackgroundImageFix_move_1" />
-    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix_move_1" result="Shape_move_2" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" in="SourceAlpha" result="HardAlpha_move_3" />
-    <feOffset dx="0" dy="0" />
-    <feGaussianBlur stdDeviation="2" />
-    <feComposite operator="arithmetic" k2="-1" k3="1" in2="HardAlpha_move_3" />
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.251 0" />
-    <feBlend mode="normal" in2="Shape_move_2" result="InnerShadow_4" />
-</filter>
         <filter colorInterpolationFilters="sRGB"  id="filter_active_1">
             <feGaussianBlur stdDeviation="15" />
         </filter>
@@ -56,11 +16,11 @@ export const MahjongBonusIcon = ({x = "0", y = "0", width = "50", count = 2, act
     </g>
 
 <g transform="translate(50 1.5)">
-    <path d="M0 91.623C0 41.021 41.021 0 91.623 0C142.225 0 183.246 41.021 183.246 91.623C183.246 142.225 142.225 183.246 91.623 183.246C41.021 183.246 0 142.225 0 91.623Z" fill="#C47F51" fillRule="evenodd" strokeWidth="10" stroke="#F6E0A1" transform="translate(5 5)" />
-    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_mave_1)" transform="rotate(0 100 100) translate(55 125) scale(2)" />
-    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_mave_2)" transform="rotate(-90 100 100) translate(63 115) scale(2)" />
-    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_mave_3)" transform="rotate(-180 100 100) translate(65 120) scale(2)" />
-    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round" filter="url(#filter_mave_4)" transform="rotate(90 100 100) translate(55 125) scale(2)" />
+    <path d="M0 91.623C0 41.021 41.021 0 91.623 0C142.225 0 183.246 41.021 183.246 91.623C183.246 142.225 142.225 183.246 91.623 183.246C41.021 183.246 0 142.225 0 91.623Z" fill="#C47F51" strokeWidth="10" stroke="#F6E0A1" transform="translate(5 5)" />
+    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round"  transform="rotate(0 100 100) translate(55 125) scale(2)" />
+    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round"  transform="rotate(-90 100 100) translate(63 115) scale(2)" />
+    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round"  transform="rotate(-180 100 100) translate(65 120) scale(2)" />
+    <path d="M11.0322 0C11.0322 0 16.083 2.29199 20.9385 2.29199C25.7939 2.29199 30.4541 0 30.4541 0L31.3213 21.9758L42.4541 18.0722C42.4541 18.0722 38.7842 26.1952 33.3154 33.8911C27.8467 41.5869 20.5791 48.8555 20.5791 48.8555C20.5791 48.8555 13.7981 42.2999 8.65332 34.7816C3.50854 27.2634 0 18.7827 0 18.7827L11.0322 21.982L11.0322 0Z" fill="#18533A" fillRule="evenodd" strokeWidth="3" stroke="#A5854F" strokeLinejoin="round"  transform="rotate(90 100 100) translate(55 125) scale(2)" />
 
 </g>
 
