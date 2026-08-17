@@ -15,7 +15,7 @@ function App() {
   const pause = useStore((state) => state.pause);
   const currentLevel = useStore((state) => state.currentLevel);
   const start = useStore((state) => state.start);
-
+  const hiddenDocument = useStore((state) => state.hiddenDocument);
   const { bgMusic } = useGameAudio();
 
 
@@ -95,43 +95,32 @@ function App() {
   }, [currentLevel, pause, ysdkInit]);
 
   useEffect(() => {
-    if(start){
-      if(pause){
-        bgMusic.pause()
-      }else {
-        if (!bgMusic.playing()) bgMusic.play();
-
-      }
-
+    if(pause || !hiddenDocument || !start){
+      bgMusic.pause()
+    }else {
+      if (!bgMusic.playing()) bgMusic.play()
     }
-
-  }, [start,bgMusic,pause]);
+  }, [start, bgMusic, pause,hiddenDocument]);
 
 
   useEffect(()=>{
     const handleVisibilityChange = ()=>{
-      if(!pause || start){
-        if (document.hidden) {
-          // Если вкладка скрыта или браузер свернут
-          bgMusic.pause();
-          // Можно также приглушить все звуки сразу: Howler.mute(true);
-        }else {
-          // Если пользователь вернулся на вкладку
-          if (!bgMusic.playing()) bgMusic.play();
 
-        }
+        if(start){
+          if (document.hidden) {
+            useStore.getState().setHiddenDocument(false)
+          }else {
+            useStore.getState().setHiddenDocument(true)
+          }
+
       }
+
 
     }
     document.addEventListener("visibilitychange",handleVisibilityChange)
-    document.addEventListener("blur", () => bgMusic.pause());
+    document.addEventListener("blur", () => useStore.getState().setHiddenDocument(true));
     document.addEventListener("focus", () => {
-        if (!pause || start) {
-          if (!bgMusic.playing()) bgMusic.play();
-        }else {
-          bgMusic.pause()
-        }
-
+      useStore.getState().setHiddenDocument(true)
     });
 
 

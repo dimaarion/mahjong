@@ -428,11 +428,11 @@ if(!start){
                                    <animated.ellipse filter={"#filter_combo_1"}
                                                       cx={0}
                                                       cy={0}
-                                                      ry={3}
+                                                      ry={6}
                                                       style={{
                                                           ...styleCombo,
                                                           fill: "#E2ED11",
-                                                          filter: "blur(3px)",
+                                                          filter: "blur(2px)",
                                                       }}    />
                                </g>
                                <text> Комбо: x{combo}</text>

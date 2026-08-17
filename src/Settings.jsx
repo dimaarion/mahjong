@@ -2,6 +2,7 @@ import {useStore} from "./store.js";
 import {getSize, useGameEffectAudio} from "./action.js";
 import Database from "./Database.js";
 import {BannerFrame, SettingsBackgroundGroup, SettingsMusicSlider} from "./Objects.jsx";
+import {useEffect} from "react";
 
 export default function Settings({size}) {
     const m = useStore((state) => state.music);
@@ -19,6 +20,9 @@ export default function Settings({size}) {
         db.setEffect(e);
     }
 
+    useEffect(() => {
+        useStore.getState().setPause(true)
+    }, []);
     return<g>
         <rect opacity={0.9} fill={"black"} width={"100%"} height={"100%"} />
         <g width={500} height={500} transform={`translate(${getSize(size,500,120)} ${getSize(size,200,200)})`}>
@@ -31,7 +35,7 @@ export default function Settings({size}) {
                 <g transform={`translate(36 70)`}  >
                     <g transform={`translate(160 70)`}>
                         <text x={45} y={0} fill={"url(#gradient_title)"} fontSize={30}>Общее количество очков</text>
-                        <text x={200 - (db.getAll().score.toString().length * 2)} y={38} fill={"url(#gradient_title)"} fontSize={30}>{db.getAll().score}</text>
+                        <text x={220 - (db.getAll().score.toString().length * 2)} y={38} fill={"url(#gradient_title)"} fontSize={30}>{db.getAll().score}</text>
                     </g>
 
                     <g transform={`translate(0 0)`}>
