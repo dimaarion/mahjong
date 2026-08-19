@@ -599,15 +599,6 @@ if(!start){
         </g>
     )}
     {settingsOpen && (   <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}> <Settings size={size} /></g>)}
-    <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}>
-        <Modal
-            size={size}
-            score={score}
-            combo={combo}
-            startGame={startGame}
-            currentLevel={currentLevel}
-            setCurrentLevel={setCurrentLevel} />
-    </g>
 </g>
 
 </svg>
