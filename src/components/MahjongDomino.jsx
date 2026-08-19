@@ -591,9 +591,6 @@ if(!start){
         <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}>
         <Modal
             size={size}
-            width={size.width}
-            height={size.height}
-            ratio={ratio}
             score={score}
             combo={combo}
             startGame={startGame}
@@ -605,9 +602,6 @@ if(!start){
     <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}>
         <Modal
             size={size}
-            width={size.width}
-            height={size.height}
-            ratio={ratio}
             score={score}
             combo={combo}
             startGame={startGame}

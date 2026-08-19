@@ -7,10 +7,7 @@ export default function Modal({
                                   startGame,
                                   score = 0,
                                   combo,
-                                  size,
-                                  width = 0,
-                                  height = 0,
-                                  ratio = 0,
+                                  size
                               }) {
     const currentLevel = useStore((state) => state.currentLevel);
     const effect = useStore((state) => state.effect);
@@ -30,11 +27,11 @@ export default function Modal({
                 <g transform={"translate(0 0)"}>
                     <SettingsBackgroundGroup />
                     <g transform={" translate(0 45)"}>
-                        <text x={80} y={200} fill={"#e8a816"} filter={"url(#filter_title_2)"} fontSize={40}> Общий счет: {db.getAll().score + score}</text>
-                        <text x={80} y={280} fill={"#e8a816"} filter={"url(#filter_title_2)"} fontSize={40}> Счет за уровень: {score}</text>
-                        <text x={80} y={360} fill={"#e8a816"} filter={"url(#filter_title_2)"} fontSize={40}> Комбо: x{combo}</text>
+                        <text x={80} y={200} fill={"#e8a816"}  fontSize={40}> Общий счет: {db.getAll().score + score}</text>
+                        <text x={80} y={280} fill={"#e8a816"}  fontSize={40}> Счет за уровень: {score}</text>
+                        <text x={80} y={360} fill={"#e8a816"}  fontSize={40}> Комбо: x{combo}</text>
                     </g>
-                    <text x={220} y={100} fontSize={50} fill={"url(#gradient_title)"} filter={"url(#filter_title_2)"}> Победа</text>
+                    <text x={220} y={100} fontSize={50} fill={"url(#gradient_title)"} > Победа</text>
                     <g onPointerDown={()=>{
                         useStore.getState().setCurrentLevel(currentLevel)
                         useStore.getState().setPause(false)
