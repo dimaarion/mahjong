@@ -335,7 +335,7 @@ export default function MahjongDomino() {
 
     const [styleCombo] = useSpring(()=>({
         from: {rx:0},
-        to: [{rx:80},{rx:(combo * 10)}],
+        to: [{rx:80},{rx:(combo * 30)}],
         loop: false,
         config: { friction:20, tension: 500 },
         onChange:()=>{
@@ -602,7 +602,18 @@ if(!start){
         </g>
     )}
     {settingsOpen && (   <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}> <Settings size={size} /></g>)}
-
+    <g transform={`scale(1.2) translate(${getSize(size,-150,-100)} -100)`}>
+        <Modal
+            size={size}
+            width={size.width}
+            height={size.height}
+            ratio={ratio}
+            score={score}
+            combo={combo}
+            startGame={startGame}
+            currentLevel={currentLevel}
+            setCurrentLevel={setCurrentLevel} />
+    </g>
 </g>
 
 </svg>
